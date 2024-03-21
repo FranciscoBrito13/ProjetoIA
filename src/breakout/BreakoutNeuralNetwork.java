@@ -3,6 +3,10 @@ package breakout;
 import utils.Commons;
 import utils.GameController;
 
+import java.util.Arrays;
+
+import static java.lang.System.arraycopy;
+
 public class BreakoutNeuralNetwork implements GameController {
 
 
@@ -27,7 +31,7 @@ public class BreakoutNeuralNetwork implements GameController {
         this.inputLayerDim = Commons.BREAKOUT_STATE_SIZE;
         this.outputLayerDim = Commons.BREAKOUT_NUM_ACTIONS;
         //this.hiddenLayerDim = (int) Math.round(Math.sqrt(inputLayerDim * outputLayerDim)); //Rule of thumb for number of nodes
-        this.hiddenLayerDim = 6;
+        this.hiddenLayerDim = 10;
         initializeRandomParameters();
 
     }
@@ -84,7 +88,7 @@ public class BreakoutNeuralNetwork implements GameController {
                 neuronSum += normalizedInput[j] * hiddenWeights[j][i];
             }
             neuronSum += hiddenBias[i];
-            hiddenLayerOutput[i] = relu(neuronSum);
+            hiddenLayerOutput[i] = sigmoid(neuronSum);
         }
         double[] outputLayerOutput = new double[outputLayerDim];
         for (int i = 0; i < outputLayerDim; i++) {

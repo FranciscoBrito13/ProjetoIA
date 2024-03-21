@@ -5,8 +5,10 @@ import java.util.List;
 
 public class GeneticAlgorithm {
     private static final int NUM_POPULATION = 100;
-    private static final double MUTATION_RATE = 0.15;
-    private static final double NUM_GENERATIONS = 500;
+    private static final double MUTATION_RATE = 0.10;
+
+    private static final double CHANGE_RATE = 0.50;
+    private static final double NUM_GENERATIONS = 1200;
     private static final double SELECTION_TOP = 0.40;
     private BreakoutNeuralNetwork[] population;
 
@@ -58,7 +60,7 @@ public class GeneticAlgorithm {
             for (int z = 0; z < NUM_POPULATION; z++) {
                 double rand = Math.random();
                 if (rand < MUTATION_RATE) {
-                    newPopulation[z] = new BreakoutNeuralNetwork();
+                    newPopulation[z] = mutation(newPopulation[z]);
                 }
             }
             population = newPopulation;
@@ -68,65 +70,101 @@ public class GeneticAlgorithm {
     }
 
     private BreakoutNeuralNetwork selectParent() {
-        int tournamentSize = (int) (SELECTION_TOP * NUM_POPULATION);
-        BreakoutNeuralNetwork bestParent = population[NUM_POPULATION - (int) (Math.random() * tournamentSize) - 1];
-        for (int i = 1; i < tournamentSize; i++) {
-            BreakoutNeuralNetwork contender = population[(int) (Math.random() * tournamentSize)];
-            if (contender.getCachedFitness() > bestParent.getCachedFitness()) {
-                bestParent = contender;
+        double totalFitness = 0.0;
+        for (BreakoutNeuralNetwork nn : population) {
+            totalFitness += nn.getCachedFitness();
+        }
+
+        double targetSelection = Math.random() * totalFitness;
+        double accumulatedFitness = 0.0;
+
+        for (BreakoutNeuralNetwork nn : population) {
+            accumulatedFitness += nn.getCachedFitness();
+            if (accumulatedFitness >= targetSelection) {
+                return nn;
             }
         }
-        return bestParent;
+        return population[population.length - 1];
     }
 
     private BreakoutNeuralNetwork crossOver(BreakoutNeuralNetwork a, BreakoutNeuralNetwork b) {
-        // Creates the child
         BreakoutNeuralNetwork childNetwork = new BreakoutNeuralNetwork();
+
+        int crossoverPoint = (int) (Math.random() * (a.getInputLayerDim() + a.getHiddenLayerDim() + a.getOutputLayerDim()));
+
+        int currentPoint = 0;
 
         // Crossover for hidden weights
         for (int i = 0; i < a.getInputLayerDim(); i++) {
             for (int j = 0; j < a.getHiddenLayerDim(); j++) {
-                if (Math.random() < 0.5) {
-                    childNetwork.getHiddenWeights()[i][j] = a.getHiddenWeights()[i][j];
-                } else {
-                    childNetwork.getHiddenWeights()[i][j] = b.getHiddenWeights()[i][j];
-                }
-            }
-        }
-
-        // Crossover for hidden biases
-        for (int i = 0; i < a.getHiddenLayerDim(); i++) {
-            // Randomly choose parent for the bias
-            if (Math.random() < 0.5) {
-                childNetwork.getHiddenBias()[i] = a.getHiddenBias()[i];
-            } else {
-                childNetwork.getHiddenBias()[i] = b.getHiddenBias()[i];
+                childNetwork.getHiddenWeights()[i][j] = currentPoint < crossoverPoint
+                        ? a.getHiddenWeights()[i][j]
+                        : b.getHiddenWeights()[i][j];
+                currentPoint++;
             }
         }
 
         // Crossover for output weights
         for (int i = 0; i < a.getHiddenLayerDim(); i++) {
             for (int j = 0; j < a.getOutputLayerDim(); j++) {
-                // Randomly choose parent for the weight
-                if (Math.random() < 0.5) {
-                    childNetwork.getOutputWeights()[i][j] = a.getOutputWeights()[i][j];
-                } else {
-                    childNetwork.getOutputWeights()[i][j] = b.getOutputWeights()[i][j];
+                childNetwork.getOutputWeights()[i][j] = currentPoint < crossoverPoint
+                        ? a.getOutputWeights()[i][j]
+                        : b.getOutputWeights()[i][j];
+                currentPoint++;
+            }
+        }
+
+        // Crossover for biases
+        for (int i = 0; i < a.getHiddenLayerDim(); i++) {
+            childNetwork.getHiddenBias()[i] = currentPoint < crossoverPoint
+                    ? a.getHiddenBias()[i]
+                    : b.getHiddenBias()[i];
+            currentPoint++;
+        }
+        for (int i = 0; i < a.getOutputLayerDim(); i++) {
+            childNetwork.getOutputBias()[i] = currentPoint < crossoverPoint
+                    ? a.getOutputBias()[i]
+                    : b.getOutputBias()[i];
+            currentPoint++;
+        }
+
+        return childNetwork;
+    }
+
+    private BreakoutNeuralNetwork mutation(BreakoutNeuralNetwork nn){
+
+        for (int i = 0; i < nn.getInputLayerDim(); i++) {
+            for (int j = 0; j < nn.getHiddenLayerDim(); j++) {
+                if (Math.random() < CHANGE_RATE) {
+                    double value = Math.random();
+                    nn.getHiddenWeights()[i][j]=value;
                 }
             }
         }
 
-        // Crossover for output biases
-        for (int i = 0; i < a.getOutputLayerDim(); i++) {
-            // Randomly choose parent for the bias
-            if (Math.random() < 0.5) {
-                childNetwork.getOutputBias()[i] = a.getOutputBias()[i];
-            } else {
-                childNetwork.getOutputBias()[i] = b.getOutputBias()[i];
+        for (int i = 0; i < nn.getHiddenLayerDim(); i++) {
+            if (Math.random() < CHANGE_RATE) {
+                double value = Math.random();
+                nn.getHiddenBias()[i] = value;
             }
         }
 
-        return childNetwork;
+        for (int i = 0; i < nn.getHiddenLayerDim(); i++) {
+            for (int j = 0; j < nn.getOutputLayerDim(); j++) {
+                if (Math.random() < CHANGE_RATE) {
+                    double value = Math.random();
+                    nn.getOutputWeights()[i][j]=value;
+                }
+            }
+        }
+
+        for (int i = 0; i < nn.getOutputLayerDim(); i++) {
+            if (Math.random() < CHANGE_RATE) {
+                double value = Math.random();
+                nn.getOutputBias()[i] = value;
+            }
+        }
+        return nn;
     }
 
 }

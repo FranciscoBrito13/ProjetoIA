@@ -26,6 +26,9 @@ public class BreakoutBoard extends JPanel {
 	public static final int LEFT = 1;
 	public static final int RIGHT = 2;
 
+	private double timeInWall = 0;
+
+
 	private Timer timer;
 	private String message = "Game Over";
 	private Ball ball;
@@ -33,6 +36,7 @@ public class BreakoutBoard extends JPanel {
 	private Brick[] bricks;
 	private boolean inGame = true;
 
+	private int ballCount = 0;
 	private GameController controller;
 	private boolean withGui;
 	private Random r = new Random();
@@ -92,6 +96,8 @@ public class BreakoutBoard extends JPanel {
 	public void runSimulation() {
 		while (inGame) {
 			int move = controller.nextMove(getState());
+			if(paddle.getX() == 0  || paddle.getX()  == 260 )
+				timeInWall++;
 			makeMove(move);
 			ball.move();
 			paddle.move();
@@ -107,7 +113,7 @@ public class BreakoutBoard extends JPanel {
 	}
 
 	public double getFitness() {
-		return kills * 100000 + 100000 - time;
+		return kills * 100000 + 100000 - time; //+ ballCount*100 - timeInWall*100;
 	}
 
 	private int[] getState() {
@@ -151,6 +157,7 @@ public class BreakoutBoard extends JPanel {
 			}
 		}
 		g2d.drawString(getFitness() + "", 10, 10);
+		g2d.drawString(timeInWall + "", 100, 10);
 	}
 
 	private void gameFinished(Graphics2D g2d) {
@@ -197,7 +204,7 @@ public class BreakoutBoard extends JPanel {
 		}
 
 		if ((ball.getRect()).intersects(paddle.getRect())) {
-
+			ballCount ++;
 			int paddleLPos = (int) paddle.getRect().getMinX();
 			int ballLPos = (int) ball.getRect().getMinX();
 
