@@ -1,9 +1,13 @@
 package breakout;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+
 public class GeneticAlgorithm {
     private static final int NUM_POPULATION = 100;
-    private static final double MUTATION_RATE = 0.05;
-    private static final double NUM_GENERATIONS = 10000;
+    private static final double MUTATION_RATE = 0.30;
+    private static final double NUM_GENERATIONS = 800;
+    private static final double SELECTION_TOP = 0.30;
     private BreakoutNeuralNetwork[] population;
 
     public GeneticAlgorithm(){
@@ -18,10 +22,29 @@ public class GeneticAlgorithm {
     }
 
     public BreakoutNeuralNetwork startSearch() {
+        BreakoutNeuralNetwork bestNN = population[0];
         for (int i = 0; i < NUM_GENERATIONS; i++) {
+
             BreakoutNeuralNetwork[] newPopulation = new BreakoutNeuralNetwork[NUM_POPULATION];
 
+            List<BreakoutNeuralNetwork> populationList = Arrays.asList(population);
+            for (BreakoutNeuralNetwork nn : population) {
+                nn.precomputeFitness();
+            }
+            populationList.sort(Comparator.comparingDouble(BreakoutNeuralNetwork::getCachedFitness));
+            populationList.toArray(population);
+
+            BreakoutNeuralNetwork bestInPopulation = population[99];
+            BreakoutNeuralNetwork worstInPopulation = population[0];
+            BreakoutNeuralNetwork middleInPopulation = population[50];
+
             System.out.println("Generation Number: " + i);
+            //System.out.println("Best = " + bestInPopulation.getCachedFitness() + "middle = " + middleInPopulation.getCachedFitness() + "worst = " + worstInPopulation.getCachedFitness());
+
+            if (bestInPopulation.getCachedFitness() > bestNN.getCachedFitness()) {
+                bestNN = bestInPopulation;
+                System.out.println("Best neural network updated! Fitness: " + bestNN.getCachedFitness());
+            }
 
             for (int j = 0; j < NUM_POPULATION / 2; j++) {
                 BreakoutNeuralNetwork parentOne = selectParent();
@@ -38,20 +61,22 @@ public class GeneticAlgorithm {
                     newPopulation[z] = new BreakoutNeuralNetwork();
                 }
             }
-
             population = newPopulation;
         }
-        return population[0];
+        System.out.println(bestNN.getCachedFitness());
+        return bestNN;
     }
 
-
-    private BreakoutNeuralNetwork selectParent(){
-        BreakoutNeuralNetwork paiUm = population[(int) (Math.random()*NUM_POPULATION)];
-        BreakoutNeuralNetwork paiDois = population[(int) (Math.random()*NUM_POPULATION)];
-        if(getNNFitness(paiUm, 1) > getNNFitness(paiDois, 1)){
-            return paiUm;
+    private BreakoutNeuralNetwork selectParent() {
+        int tournamentSize = (int) (SELECTION_TOP * NUM_POPULATION);
+        BreakoutNeuralNetwork bestParent = population[NUM_POPULATION - (int) (Math.random() * tournamentSize) - 1];
+        for (int i = 1; i < tournamentSize; i++) {
+            BreakoutNeuralNetwork contender = population[(int) (Math.random() * tournamentSize)];
+            if (contender.getCachedFitness() > bestParent.getCachedFitness()) {
+                bestParent = contender;
+            }
         }
-        return paiDois;
+        return bestParent;
     }
 
     private BreakoutNeuralNetwork crossOver(BreakoutNeuralNetwork a, BreakoutNeuralNetwork b) {
@@ -104,10 +129,4 @@ public class GeneticAlgorithm {
         return childNetwork;
     }
 
-    private double getNNFitness(BreakoutNeuralNetwork nn, int seed){
-        BreakoutBoard b = new BreakoutBoard(nn, false, seed);
-        b.setSeed(seed);
-        b.runSimulation();
-        return b.getFitness();
-    }
 }
