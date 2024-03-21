@@ -157,7 +157,6 @@ public class BreakoutBoard extends JPanel {
 			}
 		}
 		g2d.drawString(getFitness() + "", 10, 10);
-		g2d.drawString(timeInWall + "", 100, 10);
 	}
 
 	private void gameFinished(Graphics2D g2d) {

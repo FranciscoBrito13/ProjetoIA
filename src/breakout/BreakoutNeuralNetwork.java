@@ -31,7 +31,7 @@ public class BreakoutNeuralNetwork implements GameController {
         this.inputLayerDim = Commons.BREAKOUT_STATE_SIZE;
         this.outputLayerDim = Commons.BREAKOUT_NUM_ACTIONS;
         //this.hiddenLayerDim = (int) Math.round(Math.sqrt(inputLayerDim * outputLayerDim)); //Rule of thumb for number of nodes
-        this.hiddenLayerDim = 10;
+        this.hiddenLayerDim = 6;
         initializeRandomParameters();
 
     }

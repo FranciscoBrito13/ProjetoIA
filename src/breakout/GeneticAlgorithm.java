@@ -8,7 +8,7 @@ public class GeneticAlgorithm {
     private static final double MUTATION_RATE = 0.10;
 
     private static final double CHANGE_RATE = 0.50;
-    private static final double NUM_GENERATIONS = 1200;
+    private static final double NUM_GENERATIONS = 2000;
     private static final double SELECTION_TOP = 0.40;
     private BreakoutNeuralNetwork[] population;
 
