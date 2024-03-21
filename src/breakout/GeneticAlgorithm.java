@@ -5,9 +5,9 @@ import java.util.List;
 
 public class GeneticAlgorithm {
     private static final int NUM_POPULATION = 100;
-    private static final double MUTATION_RATE = 0.30;
-    private static final double NUM_GENERATIONS = 800;
-    private static final double SELECTION_TOP = 0.30;
+    private static final double MUTATION_RATE = 0.15;
+    private static final double NUM_GENERATIONS = 500;
+    private static final double SELECTION_TOP = 0.40;
     private BreakoutNeuralNetwork[] population;
 
     public GeneticAlgorithm(){

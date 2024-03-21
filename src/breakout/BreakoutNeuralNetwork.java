@@ -39,26 +39,26 @@ public class BreakoutNeuralNetwork implements GameController {
         hiddenWeights = new double[inputLayerDim][hiddenLayerDim];
         for(int i = 0; i < inputLayerDim; i++){
             for(int j = 0; j < hiddenLayerDim; j++){
-                hiddenWeights[i][j] = (Math.random()*0.50);
+                hiddenWeights[i][j] = (Math.random());
             }
         }
 
         //Deal with the hidden Bias
         hiddenBias = new double[hiddenLayerDim];
         for(int i = 0; i < hiddenLayerDim; i++){
-            hiddenBias[i] = (Math.random()*0.50);
+            hiddenBias[i] = (Math.random());
         }
         //Deals with the hidden weights
         outputWeights = new double[hiddenLayerDim][outputLayerDim];
         for(int i = 0; i < hiddenLayerDim; i++){
             for(int j = 0; j < outputLayerDim; j++){
-                outputWeights[i][j] = (Math.random()*0.50);
+                outputWeights[i][j] = (Math.random());
             }
         }
         //Deal with the output Bias
         outputBias = new double[outputLayerDim];
         for(int i = 0; i < outputLayerDim; i++){
-            outputBias[i] = (Math.random()*0.50);
+            outputBias[i] = (Math.random());
         }
 
     }
@@ -84,7 +84,7 @@ public class BreakoutNeuralNetwork implements GameController {
                 neuronSum += normalizedInput[j] * hiddenWeights[j][i];
             }
             neuronSum += hiddenBias[i];
-            hiddenLayerOutput[i] = sigmoid(neuronSum);
+            hiddenLayerOutput[i] = relu(neuronSum);
         }
         double[] outputLayerOutput = new double[outputLayerDim];
         for (int i = 0; i < outputLayerDim; i++) {
@@ -121,7 +121,6 @@ public class BreakoutNeuralNetwork implements GameController {
     @Override
     public int nextMove(int[] currentState) {
         double[] output = feedForward(currentState);
-        //Este fator de aleatoriedade é o que estraga tudo?
 
         if (output[0] < output[1]) {
             return 1; // goes to the left
@@ -157,12 +156,6 @@ public class BreakoutNeuralNetwork implements GameController {
     public double[] getOutputBias() {
         return outputBias;
     }
-
-    /*public double getFitness(){
-        BreakoutBoard bnn = new BreakoutBoard(this, false, 0);
-        bnn.runSimulation();
-        return bnn.getFitness();
-    }*/
 
     public void precomputeFitness() {
         if (this.cachedFitness == null) {
