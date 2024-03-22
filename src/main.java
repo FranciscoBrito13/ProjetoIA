@@ -1,8 +1,6 @@
-import breakout.Breakout;
-import breakout.BreakoutBoard;
-import breakout.BreakoutNeuralNetwork;
-import breakout.GeneticAlgorithm;
 import pacman.Pacman;
+import pacman.PacmanGeneticAlgorithm;
+import pacman.PacmanNeuralNetwork;
 import utils.Commons;
 
 public class main {
@@ -15,8 +13,11 @@ public class main {
     }
      */
     public static void main(String[] args){
-        Pacman p = new Pacman(new BreakoutNeuralNetwork(), true, 0);
+        PacmanGeneticAlgorithm g = new PacmanGeneticAlgorithm();
+        PacmanNeuralNetwork nn = g.startSearch();
 
+        Pacman p = new Pacman(nn, true, Commons.SEED);
     }
+
 }
 

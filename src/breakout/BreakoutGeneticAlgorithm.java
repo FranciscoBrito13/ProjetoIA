@@ -3,7 +3,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-public class GeneticAlgorithm {
+public class BreakoutGeneticAlgorithm {
+
     private static final int NUM_POPULATION = 100;
     private static final double MUTATION_RATE = 0.10;
 
@@ -12,7 +13,7 @@ public class GeneticAlgorithm {
     private static final double SELECTION_TOP = 0.40;
     private BreakoutNeuralNetwork[] population;
 
-    public GeneticAlgorithm(){
+    public BreakoutGeneticAlgorithm(){
         population = new BreakoutNeuralNetwork[NUM_POPULATION];
         createPopulation();
     }
