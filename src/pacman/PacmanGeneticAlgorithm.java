@@ -9,8 +9,8 @@ public class PacmanGeneticAlgorithm {
     private static final double MUTATION_RATE = 0.10;
 
     private static final double CHANGE_RATE = 0.50;
-    private static final double NUM_GENERATIONS = 500;
-    private static final double SELECTION_TOP = 0.40;
+    private static final double NUM_GENERATIONS = 2;
+    private static final double TOP_KEEPERS = 5;
     private PacmanNeuralNetwork[] population;
 
     public PacmanGeneticAlgorithm(){
@@ -31,10 +31,9 @@ public class PacmanGeneticAlgorithm {
             PacmanNeuralNetwork[] newPopulation = new PacmanNeuralNetwork[NUM_POPULATION];
 
             List<PacmanNeuralNetwork> populationList = Arrays.asList(population);
-            for (PacmanNeuralNetwork nn : population) {
-                nn.precomputeFitness();
-            }
+
             populationList.sort(Comparator.comparingDouble(PacmanNeuralNetwork::getCachedFitness));
+            populationList.sort((nn1, nn2) -> (int) (nn1.getCachedFitness() - nn2.getCachedFitness()));
             populationList.toArray(population);
 
             PacmanNeuralNetwork bestInPopulation = population[99];

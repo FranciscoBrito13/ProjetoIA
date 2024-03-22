@@ -30,11 +30,18 @@ public class BreakoutNeuralNetwork implements GameController {
 
         this.inputLayerDim = Commons.BREAKOUT_STATE_SIZE;
         this.outputLayerDim = Commons.BREAKOUT_NUM_ACTIONS;
-        //this.hiddenLayerDim = (int) Math.round(Math.sqrt(inputLayerDim * outputLayerDim)); //Rule of thumb for number of nodes
         this.hiddenLayerDim = 6;
         initializeRandomParameters();
 
     }
+    public BreakoutNeuralNetwork(double[] values) {
+        this.inputLayerDim = Commons.BREAKOUT_STATE_SIZE;
+        this.outputLayerDim = Commons.BREAKOUT_NUM_ACTIONS;
+        this.hiddenLayerDim = 6;
+
+        initializeParameters(values);
+    }
+
     private void initializeRandomParameters() {
         //Deals with the input weights
         //W11 W21 W31   Wij, i = input neuron, j = hidden neuron
@@ -50,7 +57,7 @@ public class BreakoutNeuralNetwork implements GameController {
         //Deal with the hidden Bias
         hiddenBias = new double[hiddenLayerDim];
         for(int i = 0; i < hiddenLayerDim; i++){
-            hiddenBias[i] = (Math.random());
+            hiddenBias[i] = (Math.random() * Commons.BIAS_FACTOR);
         }
         //Deals with the hidden weights
         outputWeights = new double[hiddenLayerDim][outputLayerDim];
@@ -62,7 +69,7 @@ public class BreakoutNeuralNetwork implements GameController {
         //Deal with the output Bias
         outputBias = new double[outputLayerDim];
         for(int i = 0; i < outputLayerDim; i++){
-            outputBias[i] = (Math.random());
+            outputBias[i] = (Math.random() * Commons.BIAS_FACTOR);
         }
 
     }
@@ -174,6 +181,102 @@ public class BreakoutNeuralNetwork implements GameController {
             precomputeFitness();
         }
         return this.cachedFitness;
+    }
+
+    @Override
+    public String toString() {
+        String result = "Neural Network: \nNumber of inputs: "
+                + inputLayerDim + "\n"
+                + "Weights between input and hidden layer with " + hiddenLayerDim + " neurons: \n";
+        String hidden = "";
+        for (int input = 0; input < inputLayerDim; input++) {
+            for (int i = 0; i < hiddenLayerDim; i++) {
+                hidden += " input" + input + "-hidden" + i + ": "
+                        + hiddenWeights[input][i] + "\n";
+            }
+        }
+        result += hidden;
+        String biasHidden = "Hidden biases: \n";
+        for (int i = 0; i < hiddenLayerDim; i++) {
+            biasHidden += " bias hidden" + i + ": " + hiddenBias[i] + "\n";
+        }
+        result += biasHidden;
+        String output = "Weights between hidden and output layer with "
+                + outputLayerDim + " neurons: \n";
+        for (int hiddenw = 0; hiddenw < hiddenLayerDim; hiddenw++) {
+            for (int i = 0; i < outputLayerDim; i++) {
+                output += " hidden" + hiddenw + "-output" + i + ": "
+                        + outputWeights[hiddenw][i] + "\n";
+            }
+        }
+        result += output;
+        String biasOutput = "Ouput biases: \n";
+        for (int i = 0; i < outputLayerDim; i++) {
+            biasOutput += " bias ouput" + i + ": " + outputBias[i] + "\n";
+        }
+        result += biasOutput;
+        return result;
+    }
+
+    private void initializeParameters(double[] values) {
+        int expectedLength = inputLayerDim * hiddenLayerDim + hiddenLayerDim + hiddenLayerDim * outputLayerDim + outputLayerDim;
+        if (values.length != expectedLength) {
+            throw new IllegalArgumentException("Wrong amount of arguments");
+        }
+
+        hiddenWeights = new double[inputLayerDim][hiddenLayerDim];
+        int index = 0;
+
+        for (int i = 0; i < inputLayerDim; i++) {
+            for (int j = 0; j < hiddenLayerDim; j++) {
+                hiddenWeights[i][j] = values[index];
+                index++;
+            }
+        }
+
+        hiddenBias = new double[hiddenLayerDim];
+        for (int i = 0; i < hiddenLayerDim; i++) {
+            hiddenBias[i] = values[index];
+            index++;
+        }
+
+        outputWeights = new double[hiddenLayerDim][outputLayerDim];
+        for (int i = 0; i < hiddenLayerDim; i++) {
+            for (int j = 0; j < outputLayerDim; j++) {
+                outputWeights[i][j] = values[index];
+                index++;
+            }
+        }
+        outputBias = new double[outputLayerDim];
+        for (int i = 0; i < outputLayerDim; i++) {
+            outputBias[i] = values[index];
+            index++;
+        }
+    }
+
+    public double[] getNeuralNetwork() {
+        double[] values = new double[(inputLayerDim * hiddenLayerDim) + hiddenLayerDim + (hiddenLayerDim * outputLayerDim) + outputLayerDim];
+
+        int index = 0;
+        for (int i = 0; i < inputLayerDim; i++) {
+            for (int j = 0; j < hiddenLayerDim; j++) {
+                values[index++] = hiddenWeights[i][j];
+            }
+        }
+
+        for (int i = 0; i < hiddenLayerDim; i++) {
+            values[index++] = hiddenBias[i];
+        }
+
+        for (int i = 0; i < hiddenLayerDim; i++) {
+            for (int j = 0; j < outputLayerDim; j++) {
+                values[index++] = outputWeights[i][j];
+            }
+        }
+        for (int i = 0; i < outputLayerDim; i++) {
+            values[index++] = outputBias[i];
+        }
+        return values;
     }
 
 

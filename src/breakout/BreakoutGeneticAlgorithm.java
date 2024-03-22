@@ -1,4 +1,6 @@
 package breakout;
+import utils.Commons;
+
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -6,11 +8,11 @@ import java.util.List;
 public class BreakoutGeneticAlgorithm {
 
     private static final int NUM_POPULATION = 100;
-    private static final double MUTATION_RATE = 0.10;
+    private static final double MUTATION_RATE = 0.25;
 
-    private static final double CHANGE_RATE = 0.50;
+    private static final double CHANGE_RATE = 0.70;
     private static final double NUM_GENERATIONS = 2000;
-    private static final double SELECTION_TOP = 0.40;
+    private static final int TOP_KEEPERS = 6;
     private BreakoutNeuralNetwork[] population;
 
     public BreakoutGeneticAlgorithm(){
@@ -25,37 +27,49 @@ public class BreakoutGeneticAlgorithm {
     }
 
     public BreakoutNeuralNetwork startSearch() {
+        int notImprovedfor = 0;
         BreakoutNeuralNetwork bestNN = population[0];
-        for (int i = 0; i < NUM_GENERATIONS; i++) {
+        BreakoutNeuralNetwork[] initialPop = population;
+        //for (int i = 0; i < NUM_GENERATIONS; i++) {
+        int i = 0;
+        while(bestNN.getCachedFitness() < 900000){
 
+            notImprovedfor++;
             BreakoutNeuralNetwork[] newPopulation = new BreakoutNeuralNetwork[NUM_POPULATION];
 
-            List<BreakoutNeuralNetwork> populationList = Arrays.asList(population);
-            for (BreakoutNeuralNetwork nn : population) {
-                nn.precomputeFitness();
+            if(notImprovedfor > 3000){
+                notImprovedfor = 0;
+                newPopulation = initialPop;
+                System.out.println("Reseted Population");
             }
-            populationList.sort(Comparator.comparingDouble(BreakoutNeuralNetwork::getCachedFitness));
+            List<BreakoutNeuralNetwork> populationList = Arrays.asList(population);
+
+            populationList.sort((nn1, nn2) -> (int) (nn1.getCachedFitness() - nn2.getCachedFitness()));
             populationList.toArray(population);
 
-            BreakoutNeuralNetwork bestInPopulation = population[99];
-            BreakoutNeuralNetwork worstInPopulation = population[0];
-            BreakoutNeuralNetwork middleInPopulation = population[50];
+            BreakoutNeuralNetwork bestInPopulation = population[NUM_POPULATION - 1];
+            //BreakoutNeuralNetwork worstInPopulation = population[0];
+            //BreakoutNeuralNetwork middleInPopulation = population[NUM_POPULATION/2];
 
             System.out.println("Generation Number: " + i);
             //System.out.println("Best = " + bestInPopulation.getCachedFitness() + "middle = " + middleInPopulation.getCachedFitness() + "worst = " + worstInPopulation.getCachedFitness());
 
             if (bestInPopulation.getCachedFitness() > bestNN.getCachedFitness()) {
+                notImprovedfor = 0;
                 bestNN = bestInPopulation;
                 System.out.println("Best neural network updated! Fitness: " + bestNN.getCachedFitness());
             }
+            for(int t = 0; t < TOP_KEEPERS; t++){
+                newPopulation[t] = population[t];
+            }
 
-            for (int j = 0; j < NUM_POPULATION / 2; j++) {
+            for (int j = 0; j < (NUM_POPULATION - TOP_KEEPERS) / 2; j++) {
                 BreakoutNeuralNetwork parentOne = selectParent();
                 BreakoutNeuralNetwork parentTwo = selectParent();
                 BreakoutNeuralNetwork childrenOne = crossOver(parentOne, parentTwo);
                 BreakoutNeuralNetwork childrenTwo = crossOver(parentOne, parentTwo);
-                newPopulation[j] = childrenOne;
-                newPopulation[j + NUM_POPULATION / 2] = childrenTwo;
+                newPopulation[j + TOP_KEEPERS] = childrenOne;
+                newPopulation[(j + TOP_KEEPERS) + ((NUM_POPULATION- TOP_KEEPERS)/ 2)] = childrenTwo;
             }
 
             for (int z = 0; z < NUM_POPULATION; z++) {
@@ -65,6 +79,7 @@ public class BreakoutGeneticAlgorithm {
                 }
             }
             population = newPopulation;
+            i++;
         }
         System.out.println(bestNN.getCachedFitness());
         return bestNN;
@@ -85,48 +100,32 @@ public class BreakoutGeneticAlgorithm {
                 return nn;
             }
         }
-        return population[population.length - 1];
+        return population[NUM_POPULATION - 1];
     }
 
     private BreakoutNeuralNetwork crossOver(BreakoutNeuralNetwork a, BreakoutNeuralNetwork b) {
         BreakoutNeuralNetwork childNetwork = new BreakoutNeuralNetwork();
 
-        int crossoverPoint = (int) (Math.random() * (a.getInputLayerDim() + a.getHiddenLayerDim() + a.getOutputLayerDim()));
-
-        int currentPoint = 0;
-
         // Crossover for hidden weights
         for (int i = 0; i < a.getInputLayerDim(); i++) {
             for (int j = 0; j < a.getHiddenLayerDim(); j++) {
-                childNetwork.getHiddenWeights()[i][j] = currentPoint < crossoverPoint
-                        ? a.getHiddenWeights()[i][j]
-                        : b.getHiddenWeights()[i][j];
-                currentPoint++;
+                childNetwork.getHiddenWeights()[i][j] = (a.getHiddenWeights()[i][j] + b.getHiddenWeights()[i][j]) / 2;
             }
         }
 
         // Crossover for output weights
         for (int i = 0; i < a.getHiddenLayerDim(); i++) {
             for (int j = 0; j < a.getOutputLayerDim(); j++) {
-                childNetwork.getOutputWeights()[i][j] = currentPoint < crossoverPoint
-                        ? a.getOutputWeights()[i][j]
-                        : b.getOutputWeights()[i][j];
-                currentPoint++;
+                childNetwork.getOutputWeights()[i][j] = (a.getOutputWeights()[i][j] + b.getOutputWeights()[i][j]) / 2;
             }
         }
 
         // Crossover for biases
         for (int i = 0; i < a.getHiddenLayerDim(); i++) {
-            childNetwork.getHiddenBias()[i] = currentPoint < crossoverPoint
-                    ? a.getHiddenBias()[i]
-                    : b.getHiddenBias()[i];
-            currentPoint++;
+            childNetwork.getHiddenBias()[i] = (a.getHiddenBias()[i] + b.getHiddenBias()[i]) / 2;
         }
         for (int i = 0; i < a.getOutputLayerDim(); i++) {
-            childNetwork.getOutputBias()[i] = currentPoint < crossoverPoint
-                    ? a.getOutputBias()[i]
-                    : b.getOutputBias()[i];
-            currentPoint++;
+            childNetwork.getOutputBias()[i] = (a.getOutputBias()[i] + b.getOutputBias()[i]) / 2;
         }
 
         return childNetwork;
@@ -146,7 +145,7 @@ public class BreakoutGeneticAlgorithm {
         for (int i = 0; i < nn.getHiddenLayerDim(); i++) {
             if (Math.random() < CHANGE_RATE) {
                 double value = Math.random();
-                nn.getHiddenBias()[i] = value;
+                nn.getHiddenBias()[i] = value * Commons.BIAS_FACTOR;
             }
         }
 
@@ -162,7 +161,7 @@ public class BreakoutGeneticAlgorithm {
         for (int i = 0; i < nn.getOutputLayerDim(); i++) {
             if (Math.random() < CHANGE_RATE) {
                 double value = Math.random();
-                nn.getOutputBias()[i] = value;
+                nn.getOutputBias()[i] = value * Commons.BIAS_FACTOR;
             }
         }
         return nn;
