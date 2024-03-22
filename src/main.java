@@ -19,12 +19,12 @@ public class main {
         writeValuesToFile(values, "BreakoutGoodValues.txt", nn);
 
         //Runs the best nn
-        BreakoutNeuralNetwork nn2 = new BreakoutNeuralNetwork(values);
-        Breakout b = new Breakout(nn2, Commons.SEED);
+        //BreakoutNeuralNetwork nn2 = new BreakoutNeuralNetwork(values);
+        //Breakout b = new Breakout(nn2, Commons.SEED);
 
 
         // CORRIGIR ISTO PARA O SEGUNDO +++ BLOCOS Está a saltar um valor
-        //BreakoutNeuralNetwork nn2 = new BreakoutNeuralNetwork(readValuesFromFile("BreakoutGoodValues.txt",1));
+        //BreakoutNeuralNetwork nn2 = new BreakoutNeuralNetwork(readValuesFromFile("BreakoutGoodValues.txt",0));
         //System.out.println(nn2.toString());
         //Breakout b = new Breakout(nn2, Commons.SEED);
         //
@@ -62,7 +62,7 @@ public class main {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
             String line;
             int count = 0;
-            int startLine = blockIndex * 63 + 2; // Adjusted starting line considering the extra lines
+            int startLine = blockIndex * 63 ; // Adjusted starting line considering the extra lines
             int lineNumber = 0;
             int linesToSkip = 2; // Number of lines to skip
             while ((line = reader.readLine()) != null && count < 62) {
