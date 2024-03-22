@@ -15,7 +15,7 @@ public interface Commons {
 	public static final int INIT_BALL_Y = 355;    
 	public static final int PERIOD = 5;
 
-	public static final int BIAS_FACTOR = 5;
+	public static final int BIAS_FACTOR = 6;
 	public static final int BREAKOUT_STATE_SIZE = 7;
 	public static final int BREAKOUT_NUM_ACTIONS = 2;
 	
