@@ -7,10 +7,11 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class main {
     public static void main(String[] args){
-        //Find best nn
+//      //Find best nn
         BreakoutGeneticAlgorithm ga = new BreakoutGeneticAlgorithm();
         BreakoutNeuralNetwork nn = ga.startSearch();
         double[] values = nn.getNeuralNetwork();
@@ -18,16 +19,16 @@ public class main {
         //Write values in txt
         writeValuesToFile(values, "BreakoutGoodValues.txt", nn);
 
-        //Runs the best nn
-        //BreakoutNeuralNetwork nn2 = new BreakoutNeuralNetwork(values);
-        //Breakout b = new Breakout(nn2, Commons.SEED);
+       //Runs the best nn
+        BreakoutNeuralNetwork nn2 = new BreakoutNeuralNetwork(values);
+        Breakout b = new Breakout(nn2, Commons.SEED);
 
 
-        // CORRIGIR ISTO PARA O SEGUNDO +++ BLOCOS Está a saltar um valor
-        //BreakoutNeuralNetwork nn2 = new BreakoutNeuralNetwork(readValuesFromFile("BreakoutGoodValues.txt",0));
-        //System.out.println(nn2.toString());
-        //Breakout b = new Breakout(nn2, Commons.SEED);
-        //
+//        //CORRIGIR ISTO PARA O SEGUNDO +++ BLOCOS Está a saltar um valor
+//        BreakoutNeuralNetwork nn2 = new BreakoutNeuralNetwork(readValuesFromFile("BreakoutGoodValues.txt",2));
+//        System.out.println(nn2.toString());
+//        Breakout b = new Breakout(nn2, Commons.SEED);
+
 
     }
     /*
@@ -47,7 +48,7 @@ public class main {
             for (double value : values) {
                 writer.write(Double.toString(value) + "\n");
             }
-
+            writer.write("*\n");
             writer.close();
             System.out.println("Values have been appended");
         } catch (IOException e) {
@@ -57,35 +58,35 @@ public class main {
     }
 
     private static double[] readValuesFromFile(String fileName, int blockIndex) {
-        double[] values = new double[62];
+        ArrayList<Double> valuesList = new ArrayList<>();
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
             String line;
-            int count = 0;
-            int startLine = blockIndex * 63 ; // Adjusted starting line considering the extra lines
-            int lineNumber = 0;
-            int linesToSkip = 2; // Number of lines to skip
-            while ((line = reader.readLine()) != null && count < 62) {
-                if (lineNumber >= startLine) {
-                    if (linesToSkip > 0) {
-                        linesToSkip--;
-                        lineNumber++;
-                        continue; // Skip the line
+            while ((line = reader.readLine()) != null) {
+                if (line.equals("*")) {
+                    if (blockIndex >= 0){
+                        blockIndex--;
+                        continue;
+                    }else {
+                        break;
                     }
+                }
+                if (blockIndex < 0){
                     try {
-                        values[count] = Double.parseDouble(line);
-                        count++;
+                        valuesList.add(Double.parseDouble(line));
                     } catch (NumberFormatException e) {
-                        // If the line is not a valid double, just continue to the next line
                         continue;
                     }
                 }
-                lineNumber++;
             }
             reader.close();
         } catch (IOException e) {
             System.out.println("An error occurred while reading the file");
             e.printStackTrace();
+        }
+        double[] values = new double[valuesList.size()];
+        for(int i = 0; i < values.length; i++){
+            values[i] = valuesList.get(i);
         }
         return values;
     }

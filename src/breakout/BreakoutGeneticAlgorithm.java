@@ -11,7 +11,7 @@ public class BreakoutGeneticAlgorithm {
     private static final double MUTATION_RATE = 0.25;
 
     private static final double CHANGE_RATE = 0.70;
-    private static final double NUM_GENERATIONS = 2000;
+    private static final double NUM_GENERATIONS = 50000;
     private static final int TOP_KEEPERS = 6;
     private BreakoutNeuralNetwork[] population;
 
@@ -32,12 +32,12 @@ public class BreakoutGeneticAlgorithm {
         BreakoutNeuralNetwork[] initialPop = population;
         //for (int i = 0; i < NUM_GENERATIONS; i++) {
         int i = 0;
-        while(bestNN.getCachedFitness() < 1700000){
+        while(bestNN.getCachedFitness() < 1200000){
 
             notImprovedfor++;
             BreakoutNeuralNetwork[] newPopulation = new BreakoutNeuralNetwork[NUM_POPULATION];
 
-            if(notImprovedfor > 5000){
+            if(notImprovedfor > 15000){
                 notImprovedfor = 0;
                 newPopulation = initialPop;
                 System.out.println("Reseted Population");
@@ -50,11 +50,10 @@ public class BreakoutGeneticAlgorithm {
             BreakoutNeuralNetwork bestInPopulation = population[NUM_POPULATION - 1];
             //BreakoutNeuralNetwork worstInPopulation = population[0];
             //BreakoutNeuralNetwork middleInPopulation = population[NUM_POPULATION/2];
-
-            System.out.println("Generation Number: " + i);
             //System.out.println("Best = " + bestInPopulation.getCachedFitness() + "middle = " + middleInPopulation.getCachedFitness() + "worst = " + worstInPopulation.getCachedFitness());
 
             if (bestInPopulation.getCachedFitness() > bestNN.getCachedFitness()) {
+                System.out.println("Generation Number: " + i);
                 notImprovedfor = 0;
                 bestNN = bestInPopulation;
                 System.out.println("Best neural network updated! Fitness: " + bestNN.getCachedFitness());
