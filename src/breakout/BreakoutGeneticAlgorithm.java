@@ -32,12 +32,12 @@ public class BreakoutGeneticAlgorithm {
         BreakoutNeuralNetwork[] initialPop = population;
         //for (int i = 0; i < NUM_GENERATIONS; i++) {
         int i = 0;
-        while(bestNN.getCachedFitness() < 2000000){
+        while(bestNN.getCachedFitness() < 1700000){
 
             notImprovedfor++;
             BreakoutNeuralNetwork[] newPopulation = new BreakoutNeuralNetwork[NUM_POPULATION];
 
-            if(notImprovedfor > 7500){
+            if(notImprovedfor > 5000){
                 notImprovedfor = 0;
                 newPopulation = initialPop;
                 System.out.println("Reseted Population");
