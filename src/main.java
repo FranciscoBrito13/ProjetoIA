@@ -1,7 +1,12 @@
 import breakout.Breakout;
 import breakout.BreakoutGeneticAlgorithm;
 import breakout.BreakoutNeuralNetwork;
+import pacman.Pacman;
+import pacman.PacmanGeneticAlgorithm;
+import pacman.PacmanNeuralNetwork;
 import utils.Commons;
+import utils.GameController;
+
 import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -10,37 +15,41 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class main {
-    public static void main(String[] args){
+    /*public static void main(String[] args){
 //      //Find best nn
-        BreakoutGeneticAlgorithm ga = new BreakoutGeneticAlgorithm();
-        BreakoutNeuralNetwork nn = ga.startSearch();
-        double[] values = nn.getNeuralNetwork();
+        //BreakoutGeneticAlgorithm ga = new BreakoutGeneticAlgorithm();
+        //BreakoutNeuralNetwork nn = ga.startSearch();
+        //double[] values = nn.getNeuralNetwork();
 
         //Write values in txt
-        writeValuesToFile(values, "BreakoutGoodValues.txt", nn);
+        //writeValuesToFile(values, "BreakoutGoodValues.txt", nn);
 
        //Runs the best nn
-        BreakoutNeuralNetwork nn2 = new BreakoutNeuralNetwork(values);
-        Breakout b = new Breakout(nn2, Commons.SEED);
+        //BreakoutNeuralNetwork nn2 = new BreakoutNeuralNetwork(values);
+        //Breakout b = new Breakout(nn2, Commons.SEED);
 
 
-//        //CORRIGIR ISTO PARA O SEGUNDO +++ BLOCOS Está a saltar um valor
-//        BreakoutNeuralNetwork nn2 = new BreakoutNeuralNetwork(readValuesFromFile("BreakoutGoodValues.txt",2));
-//        System.out.println(nn2.toString());
-//        Breakout b = new Breakout(nn2, Commons.SEED);
+        //CORRIGIR ISTO PARA O SEGUNDO +++ BLOCOS Está a saltar um valor
+        //BreakoutNeuralNetwork nn2 = new BreakoutNeuralNetwork(readValuesFromFile("BreakoutGoodValues.txt",2));
+        //System.out.println(nn2.toString());
+        //Breakout b = new Breakout(nn2, Commons.SEED);
 
 
     }
-    /*
+    */
+
     public static void main(String[] args){
         PacmanGeneticAlgorithm g = new PacmanGeneticAlgorithm();
         PacmanNeuralNetwork nn = g.startSearch();
+        double[] values = nn.getNeuralNetwork();
+
+        writeValuesToFile(values, "PacmanGoodValues.txt", nn);
 
         Pacman p = new Pacman(nn, true, Commons.SEED);
     }
-     */
 
-    private static void writeValuesToFile(double[] values, String fileName, BreakoutNeuralNetwork nn) {
+
+    private static void writeValuesToFile(double[] values, String fileName, GameController nn) {
         try {
             FileWriter writer = new FileWriter(fileName, true);
             writer.write("Starting here\n");

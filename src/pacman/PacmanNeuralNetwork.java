@@ -1,6 +1,5 @@
 package pacman;
 
-import breakout.BreakoutBoard;
 import utils.Commons;
 import utils.GameController;
 
@@ -42,7 +41,7 @@ public class PacmanNeuralNetwork implements GameController {
         //Deal with the hidden Bias
         hiddenBias = new double[hiddenLayerDim];
         for(int i = 0; i < hiddenLayerDim; i++){
-            hiddenBias[i] = (Math.random());
+            hiddenBias[i] = (Math.random() * Commons.BIAS_FACTOR_PACMAN);
         }
         //Deals with the hidden weights
         outputWeights = new double[hiddenLayerDim][outputLayerDim];
@@ -54,7 +53,7 @@ public class PacmanNeuralNetwork implements GameController {
         //Deal with the output Bias
         outputBias = new double[outputLayerDim];
         for(int i = 0; i < outputLayerDim; i++){
-            outputBias[i] = (Math.random());
+            outputBias[i] = (Math.random() * Commons.BIAS_FACTOR_PACMAN);
         }
 
     }
@@ -118,7 +117,7 @@ public class PacmanNeuralNetwork implements GameController {
             this.cachedFitness = pnn.getFitness();
         }
     }
-
+    @Override
     public double getCachedFitness() {
         if (this.cachedFitness == null) {
             precomputeFitness();
@@ -165,6 +164,31 @@ public class PacmanNeuralNetwork implements GameController {
 
     public double[] getOutputBias() {
         return outputBias;
+    }
+
+    public double[] getNeuralNetwork() {
+        double[] values = new double[(inputLayerDim * hiddenLayerDim) + hiddenLayerDim + (hiddenLayerDim * outputLayerDim) + outputLayerDim];
+
+        int index = 0;
+        for (int i = 0; i < inputLayerDim; i++) {
+            for (int j = 0; j < hiddenLayerDim; j++) {
+                values[index++] = hiddenWeights[i][j];
+            }
+        }
+
+        for (int i = 0; i < hiddenLayerDim; i++) {
+            values[index++] = hiddenBias[i];
+        }
+
+        for (int i = 0; i < hiddenLayerDim; i++) {
+            for (int j = 0; j < outputLayerDim; j++) {
+                values[index++] = outputWeights[i][j];
+            }
+        }
+        for (int i = 0; i < outputLayerDim; i++) {
+            values[index++] = outputBias[i];
+        }
+        return values;
     }
 
 }

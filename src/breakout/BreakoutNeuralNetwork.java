@@ -3,10 +3,6 @@ package breakout;
 import utils.Commons;
 import utils.GameController;
 
-import java.util.Arrays;
-
-import static java.lang.System.arraycopy;
-
 public class BreakoutNeuralNetwork implements GameController {
 
 
@@ -57,7 +53,7 @@ public class BreakoutNeuralNetwork implements GameController {
         //Deal with the hidden Bias
         hiddenBias = new double[hiddenLayerDim];
         for(int i = 0; i < hiddenLayerDim; i++){
-            hiddenBias[i] = (Math.random() * Commons.BIAS_FACTOR);
+            hiddenBias[i] = (Math.random() * Commons.BIAS_FACTOR_BREAKOUT);
         }
         //Deals with the hidden weights
         outputWeights = new double[hiddenLayerDim][outputLayerDim];
@@ -69,7 +65,7 @@ public class BreakoutNeuralNetwork implements GameController {
         //Deal with the output Bias
         outputBias = new double[outputLayerDim];
         for(int i = 0; i < outputLayerDim; i++){
-            outputBias[i] = (Math.random() * Commons.BIAS_FACTOR);
+            outputBias[i] = (Math.random() * Commons.BIAS_FACTOR_BREAKOUT);
         }
 
     }

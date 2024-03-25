@@ -15,4 +15,5 @@ public interface GameController {
 
 	public int nextMove(int[] currentState);
 
+    double getCachedFitness();
 }

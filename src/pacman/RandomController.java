@@ -9,4 +9,9 @@ public class RandomController implements GameController {
 		return (int) (Math.random()*5);
 	}
 
+	@Override
+	public double getCachedFitness() {
+		return 0;
+	}
+
 }

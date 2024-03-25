@@ -1,4 +1,6 @@
 package pacman;
+import breakout.BreakoutNeuralNetwork;
+import utils.Commons;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -6,11 +8,11 @@ import java.util.List;
 
 public class PacmanGeneticAlgorithm {
     private static final int NUM_POPULATION = 100;
-    private static final double MUTATION_RATE = 0.10;
+    private static final double MUTATION_RATE = 0.25;
 
-    private static final double CHANGE_RATE = 0.50;
+    private static final double CHANGE_RATE = 0.70;
     private static final double NUM_GENERATIONS = 2;
-    private static final double TOP_KEEPERS = 5;
+    private static final int TOP_KEEPERS = 6;
     private PacmanNeuralNetwork[] population;
 
     public PacmanGeneticAlgorithm(){
@@ -26,10 +28,18 @@ public class PacmanGeneticAlgorithm {
 
     public PacmanNeuralNetwork startSearch() {
         PacmanNeuralNetwork bestNN = population[0];
-        for (int i = 0; i < NUM_GENERATIONS; i++) {
-
+        int i = 0;
+        int notImprovedfor = 0;
+        PacmanNeuralNetwork[] initialPop = population;
+        //for (int i = 0; i < NUM_GENERATIONS; i++) {
+        while (bestNN.getCachedFitness() < 100000) {
             PacmanNeuralNetwork[] newPopulation = new PacmanNeuralNetwork[NUM_POPULATION];
 
+            if(notImprovedfor > 2500){
+                notImprovedfor = 0;
+                newPopulation = initialPop;
+                System.out.println("Reseted Population");
+            }
             List<PacmanNeuralNetwork> populationList = Arrays.asList(population);
 
             populationList.sort(Comparator.comparingDouble(PacmanNeuralNetwork::getCachedFitness));
@@ -40,21 +50,27 @@ public class PacmanGeneticAlgorithm {
             PacmanNeuralNetwork worstInPopulation = population[0];
             PacmanNeuralNetwork middleInPopulation = population[50];
 
-            System.out.println("Generation Number: " + i);
+            if(i % 50 == 0)
+                System.out.println("Generation Number: " + i);
             //System.out.println("Best = " + bestInPopulation.getCachedFitness() + "middle = " + middleInPopulation.getCachedFitness() + "worst = " + worstInPopulation.getCachedFitness());
 
             if (bestInPopulation.getCachedFitness() > bestNN.getCachedFitness()) {
                 bestNN = bestInPopulation;
+                System.out.println("Generation Number: " + i);
                 System.out.println("Best neural network updated! Fitness: " + bestNN.getCachedFitness());
             }
 
-            for (int j = 0; j < NUM_POPULATION / 2; j++) {
+            for(int t = 0; t < TOP_KEEPERS; t++){
+                newPopulation[t] = population[t];
+            }
+
+            for (int j = 0; j < (NUM_POPULATION - TOP_KEEPERS) / 2; j++) {
                 PacmanNeuralNetwork parentOne = selectParent();
                 PacmanNeuralNetwork parentTwo = selectParent();
                 PacmanNeuralNetwork childrenOne = crossOver(parentOne, parentTwo);
                 PacmanNeuralNetwork childrenTwo = crossOver(parentOne, parentTwo);
-                newPopulation[j] = childrenOne;
-                newPopulation[j + NUM_POPULATION / 2] = childrenTwo;
+                newPopulation[j + TOP_KEEPERS] = childrenOne;
+                newPopulation[(j + TOP_KEEPERS) + ((NUM_POPULATION- TOP_KEEPERS)/ 2)] = childrenTwo;
             }
 
             for (int z = 0; z < NUM_POPULATION; z++) {
@@ -63,11 +79,14 @@ public class PacmanGeneticAlgorithm {
                     newPopulation[z] = mutation(newPopulation[z]);
                 }
             }
+            notImprovedfor++;
+            i++;
             population = newPopulation;
         }
         System.out.println(bestNN.getCachedFitness());
         return bestNN;
     }
+
 
     private PacmanNeuralNetwork selectParent() {
         double totalFitness = 0.0;
@@ -90,42 +109,26 @@ public class PacmanGeneticAlgorithm {
     private PacmanNeuralNetwork crossOver(PacmanNeuralNetwork a, PacmanNeuralNetwork b) {
         PacmanNeuralNetwork childNetwork = new PacmanNeuralNetwork();
 
-        int crossoverPoint = (int) (Math.random() * (a.getInputLayerDim() + a.getHiddenLayerDim() + a.getOutputLayerDim()));
-
-        int currentPoint = 0;
-
         // Crossover for hidden weights
         for (int i = 0; i < a.getInputLayerDim(); i++) {
             for (int j = 0; j < a.getHiddenLayerDim(); j++) {
-                childNetwork.getHiddenWeights()[i][j] = currentPoint < crossoverPoint
-                        ? a.getHiddenWeights()[i][j]
-                        : b.getHiddenWeights()[i][j];
-                currentPoint++;
+                childNetwork.getHiddenWeights()[i][j] = (a.getHiddenWeights()[i][j] + b.getHiddenWeights()[i][j]) / 2;
             }
         }
 
         // Crossover for output weights
         for (int i = 0; i < a.getHiddenLayerDim(); i++) {
             for (int j = 0; j < a.getOutputLayerDim(); j++) {
-                childNetwork.getOutputWeights()[i][j] = currentPoint < crossoverPoint
-                        ? a.getOutputWeights()[i][j]
-                        : b.getOutputWeights()[i][j];
-                currentPoint++;
+                childNetwork.getOutputWeights()[i][j] = (a.getOutputWeights()[i][j] + b.getOutputWeights()[i][j]) / 2;
             }
         }
 
         // Crossover for biases
         for (int i = 0; i < a.getHiddenLayerDim(); i++) {
-            childNetwork.getHiddenBias()[i] = currentPoint < crossoverPoint
-                    ? a.getHiddenBias()[i]
-                    : b.getHiddenBias()[i];
-            currentPoint++;
+            childNetwork.getHiddenBias()[i] = (a.getHiddenBias()[i] + b.getHiddenBias()[i]) / 2;
         }
         for (int i = 0; i < a.getOutputLayerDim(); i++) {
-            childNetwork.getOutputBias()[i] = currentPoint < crossoverPoint
-                    ? a.getOutputBias()[i]
-                    : b.getOutputBias()[i];
-            currentPoint++;
+            childNetwork.getOutputBias()[i] = (a.getOutputBias()[i] + b.getOutputBias()[i]) / 2;
         }
 
         return childNetwork;
@@ -145,7 +148,7 @@ public class PacmanGeneticAlgorithm {
         for (int i = 0; i < nn.getHiddenLayerDim(); i++) {
             if (Math.random() < CHANGE_RATE) {
                 double value = Math.random();
-                nn.getHiddenBias()[i] = value;
+                nn.getHiddenBias()[i] = value * Commons.BIAS_FACTOR_PACMAN;
             }
         }
 
@@ -161,11 +164,10 @@ public class PacmanGeneticAlgorithm {
         for (int i = 0; i < nn.getOutputLayerDim(); i++) {
             if (Math.random() < CHANGE_RATE) {
                 double value = Math.random();
-                nn.getOutputBias()[i] = value;
+                nn.getOutputBias()[i] = value * Commons.BIAS_FACTOR_PACMAN;
             }
         }
         return nn;
     }
-
 
 }

@@ -2,7 +2,6 @@ package breakout;
 import utils.Commons;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 public class BreakoutGeneticAlgorithm {
@@ -144,7 +143,7 @@ public class BreakoutGeneticAlgorithm {
         for (int i = 0; i < nn.getHiddenLayerDim(); i++) {
             if (Math.random() < CHANGE_RATE) {
                 double value = Math.random();
-                nn.getHiddenBias()[i] = value * Commons.BIAS_FACTOR;
+                nn.getHiddenBias()[i] = value * Commons.BIAS_FACTOR_BREAKOUT;
             }
         }
 
@@ -160,7 +159,7 @@ public class BreakoutGeneticAlgorithm {
         for (int i = 0; i < nn.getOutputLayerDim(); i++) {
             if (Math.random() < CHANGE_RATE) {
                 double value = Math.random();
-                nn.getOutputBias()[i] = value * Commons.BIAS_FACTOR;
+                nn.getOutputBias()[i] = value * Commons.BIAS_FACTOR_BREAKOUT;
             }
         }
         return nn;
