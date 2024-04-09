@@ -11,7 +11,7 @@ public class BreakoutGeneticAlgorithm {
 
     private static final double CHANGE_RATE = 0.70;
     private static final double NUM_GENERATIONS = 50000;
-    private static final int TOP_KEEPERS = 6;
+    private static final int TOP_KEEPERS = 4;
     private BreakoutNeuralNetwork[] population;
 
     public BreakoutGeneticAlgorithm(){
@@ -31,25 +31,26 @@ public class BreakoutGeneticAlgorithm {
         BreakoutNeuralNetwork[] initialPop = population;
         //for (int i = 0; i < NUM_GENERATIONS; i++) {
         int i = 0;
-        while(bestNN.getCachedFitness() < 1200000){
-
+        while(bestNN.getCachedFitness()  < 1000000){
             notImprovedfor++;
             BreakoutNeuralNetwork[] newPopulation = new BreakoutNeuralNetwork[NUM_POPULATION];
 
-            if(notImprovedfor > 15000){
+            if(notImprovedfor > 7500){
                 notImprovedfor = 0;
                 newPopulation = initialPop;
                 System.out.println("Reseted Population");
             }
             List<BreakoutNeuralNetwork> populationList = Arrays.asList(population);
 
-            populationList.sort((nn1, nn2) -> (int) (nn1.getCachedFitness() - nn2.getCachedFitness()));
+            populationList.sort((nn1, nn2) -> (int) ((nn2.getCachedFitness() - nn1.getCachedFitness())));
             populationList.toArray(population);
 
-            BreakoutNeuralNetwork bestInPopulation = population[NUM_POPULATION - 1];
-            //BreakoutNeuralNetwork worstInPopulation = population[0];
-            //BreakoutNeuralNetwork middleInPopulation = population[NUM_POPULATION/2];
-            //System.out.println("Best = " + bestInPopulation.getCachedFitness() + "middle = " + middleInPopulation.getCachedFitness() + "worst = " + worstInPopulation.getCachedFitness());
+            BreakoutNeuralNetwork bestInPopulation = population[0];
+
+            if(i % 50 == 0){
+                System.out.println("Geracao = " + i);
+            }
+
 
             if (bestInPopulation.getCachedFitness() > bestNN.getCachedFitness()) {
                 System.out.println("Generation Number: " + i);
@@ -98,7 +99,7 @@ public class BreakoutGeneticAlgorithm {
                 return nn;
             }
         }
-        return population[NUM_POPULATION - 1];
+        return population[0];
     }
 
     private BreakoutNeuralNetwork crossOver(BreakoutNeuralNetwork a, BreakoutNeuralNetwork b) {
@@ -134,35 +135,37 @@ public class BreakoutGeneticAlgorithm {
         for (int i = 0; i < nn.getInputLayerDim(); i++) {
             for (int j = 0; j < nn.getHiddenLayerDim(); j++) {
                 if (Math.random() < CHANGE_RATE) {
-                    double value = Math.random();
-                    nn.getHiddenWeights()[i][j]=value;
+                    double value = (Math.random() * 2 - 1);
+                    nn.getHiddenWeights()[i][j] += value; // ANTES ERA APENAS DEFINIDO ENTRE 0 - 1
                 }
             }
         }
 
         for (int i = 0; i < nn.getHiddenLayerDim(); i++) {
             if (Math.random() < CHANGE_RATE) {
-                double value = Math.random();
-                nn.getHiddenBias()[i] = value * Commons.BIAS_FACTOR_BREAKOUT;
+                double value = (Math.random() * 2 - 1);
+                nn.getHiddenBias()[i] += value; // ANTES ERA DEFINIDO ENTRE (0 - 1) * BIAS_FACTOR
             }
         }
 
         for (int i = 0; i < nn.getHiddenLayerDim(); i++) {
             for (int j = 0; j < nn.getOutputLayerDim(); j++) {
                 if (Math.random() < CHANGE_RATE) {
-                    double value = Math.random();
-                    nn.getOutputWeights()[i][j]=value;
+                    double value = (Math.random() * 2 - 1);
+                    nn.getOutputWeights()[i][j] += value; // ANTES ERA APENAS DEFINIDO ENTRE 0 - 1
                 }
             }
         }
 
         for (int i = 0; i < nn.getOutputLayerDim(); i++) {
             if (Math.random() < CHANGE_RATE) {
-                double value = Math.random();
-                nn.getOutputBias()[i] = value * Commons.BIAS_FACTOR_BREAKOUT;
+                double value = (Math.random() * 2 - 1);
+                nn.getOutputBias()[i] += value; // ANTES ERA DEFINIDO ENTRE (0 - 1) * BIAS_FACTOR
             }
         }
         return nn;
     }
+
+
 
 }
