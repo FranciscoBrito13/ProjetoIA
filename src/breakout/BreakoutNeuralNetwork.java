@@ -202,7 +202,7 @@ public class BreakoutNeuralNetwork implements GameController {
     public void precomputeFitness() {
         BreakoutBoard bnn = new BreakoutBoard(this, false, Commons.SEED);
         bnn.runSimulation();
-        BreakoutBoard bnn2 = new BreakoutBoard(this, false, Commons.SEED + 100);
+        BreakoutBoard bnn2 = new BreakoutBoard(this, false, Commons.SEED + 50);
         bnn2.runSimulation();
         cachedFitness = (bnn.getFitness() + bnn2.getFitness()) / 2;
     }
