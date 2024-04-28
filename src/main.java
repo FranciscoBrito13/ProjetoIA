@@ -1,12 +1,14 @@
 import breakout.Breakout;
 import breakout.BreakoutGeneticAlgorithm;
 import breakout.BreakoutNeuralNetwork;
+import breakout.NeuralNetworkGUI;
 import pacman.Pacman;
 import pacman.PacmanGeneticAlgorithm;
 import pacman.PacmanNeuralNetwork;
 import utils.Commons;
 import utils.GameController;
 
+import javax.swing.*;
 import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -17,16 +19,13 @@ import java.util.ArrayList;
 public class main {
     public static void main(String[] args){
         //Find best nn
-//        BreakoutGeneticAlgorithm ga = new BreakoutGeneticAlgorithm();
-//        BreakoutNeuralNetwork nn = ga.startSearch();
-//        System.out.println(nn);
-//        double[] values = nn.getNeuralNetwork();
-//
-//        //Write values in txt
-//        writeValuesToFile(values, "BreakoutGoodValues.txt", nn);
-//
-//       //Runs the best nn
-//        Breakout b = new Breakout(nn, Commons.SEED);
+        BreakoutGeneticAlgorithm ga = new BreakoutGeneticAlgorithm();
+        BreakoutNeuralNetwork nn = ga.startSearch();
+
+        double[] values = nn.getNeuralNetwork();
+
+        BreakoutNeuralNetwork nn2  = new BreakoutNeuralNetwork(values, true);
+        Breakout b = new Breakout(nn2, Commons.SEED);
 
         //BreakoutNeuralNetwork nn2 = new BreakoutNeuralNetwork(readValuesFromFile("BreakoutGoodValues.txt",0));
         //System.out.println(nn2.toString());
@@ -34,16 +33,14 @@ public class main {
         //System.out.println((Math.random() * 2) - 1);
 
 
-        PacmanGeneticAlgorithm g = new PacmanGeneticAlgorithm();
-        PacmanNeuralNetwork nn = g.startSearch();
-        writeValuesToFile(nn.getNeuralNetwork(), "PacmanGoodValues.txt", nn);
+//        PacmanGeneticAlgorithm g = new PacmanGeneticAlgorithm();
+//        PacmanNeuralNetwork nn = g.startSearch();
+//        writeValuesToFile(nn.getNeuralNetwork(), "PacmanGoodValues.txt", nn);
 
 //        double[] values = readValuesFromFile("PacmanGoodValues.txt", 0);
 //        PacmanNeuralNetwork nn = new PacmanNeuralNetwork(values);
-        System.out.println(nn.getCachedFitness());
-        System.out.println("fit:");
-        System.out.println(nn.getFitness());
-        Pacman p = new Pacman(nn, true, Commons.SEED);
+
+       // Pacman p = new Pacman(nn, true, Commons.SEED);
     }
 
 

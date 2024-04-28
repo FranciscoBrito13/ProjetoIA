@@ -36,9 +36,9 @@ public class PacmanNeuralNetwork extends NeuralNetwork {
     protected void precomputeFitness() {
         PacmanBoard pnn = new PacmanBoard(this, false, Commons.SEED);
         pnn.runSimulation();
-//        PacmanBoard pnn2 = new PacmanBoard(this, false, Commons.SEED + 50);
-//        pnn2.runSimulation();
-        cachedFitness = pnn.getFitness(); // + pnn2.getFitness()) / 2
+        PacmanBoard pnn2 = new PacmanBoard(this, false, Commons.SEED + 50);
+        pnn2.runSimulation();
+        cachedFitness = (pnn.getFitness() + pnn2.getFitness()) / 2;
     }
 
     public double getFitness(){

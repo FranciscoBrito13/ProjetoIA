@@ -20,7 +20,7 @@ public class BreakoutGeneticAlgorithm {
     }
     private void createPopulation() {
         for(int i = 0; i < NUM_POPULATION; i++){
-            BreakoutNeuralNetwork nn = new BreakoutNeuralNetwork();
+            BreakoutNeuralNetwork nn = new BreakoutNeuralNetwork(false);
             population[i] = nn;
         }
     }
@@ -31,11 +31,11 @@ public class BreakoutGeneticAlgorithm {
         BreakoutNeuralNetwork[] initialPop = population;
         //for (int i = 0; i < NUM_GENERATIONS; i++) {
         int i = 0;
-        while(bestNN.getCachedFitness()  < 1000000){
+        while(bestNN.getCachedFitness()  < 200000){
             notImprovedfor++;
             BreakoutNeuralNetwork[] newPopulation = new BreakoutNeuralNetwork[NUM_POPULATION];
 
-            if(notImprovedfor > 7500){
+            if(notImprovedfor > 500){
                 notImprovedfor = 0;
                 createPopulation();
                 newPopulation = population;
@@ -104,7 +104,7 @@ public class BreakoutGeneticAlgorithm {
     }
 
     private BreakoutNeuralNetwork crossOver(BreakoutNeuralNetwork a, BreakoutNeuralNetwork b) {
-        BreakoutNeuralNetwork childNetwork = new BreakoutNeuralNetwork();
+        BreakoutNeuralNetwork childNetwork = new BreakoutNeuralNetwork(false);
 
         // Crossover for hidden weights
         for (int i = 0; i < a.getInputLayerDim(); i++) {

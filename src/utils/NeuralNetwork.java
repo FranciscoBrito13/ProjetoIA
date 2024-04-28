@@ -1,8 +1,7 @@
 package utils;
 
 import java.util.function.Function;
-
-abstract public class NeuralNetwork implements GameController {
+ public abstract class NeuralNetwork implements GameController {
     //Defines the dimensions of the input, hidden, and output layers
     private final int inputLayerDim;
     private final int outputLayerDim;
