@@ -46,7 +46,7 @@ public class NeuralNetworkPanel extends JPanel {
         drawConnections(g2d, hiddenLayerSize, 300, outputLayerSize, 500);
     }
 
-    private void drawNeurons(Graphics2D g2d, int layerSize, int x, int layerGap) {
+     private void drawNeurons(Graphics2D g2d, int layerSize, int x, int layerGap) {
         int startY = (getHeight() - layerSize * SPACE_BETWEEN_NEURONS) / 2;
         int startX = x;
 

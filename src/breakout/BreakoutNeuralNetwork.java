@@ -35,6 +35,7 @@ public class BreakoutNeuralNetwork extends NeuralNetwork {
     public int nextMove(int[] currentState) {
         double[] output = feedForward(currentState);
 
+
         if (output[0] < output[1]) {
             return 1; // Move-se para a esquerda
         } else {
