@@ -37,7 +37,8 @@ public class BreakoutGeneticAlgorithm {
 
             if(notImprovedfor > 7500){
                 notImprovedfor = 0;
-                newPopulation = initialPop;
+                createPopulation();
+                newPopulation = population;
                 System.out.println("Reseted Population");
             }
             List<BreakoutNeuralNetwork> populationList = Arrays.asList(population);

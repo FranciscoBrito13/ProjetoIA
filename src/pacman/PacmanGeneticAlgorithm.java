@@ -26,35 +26,39 @@ public class PacmanGeneticAlgorithm {
     }
 
     public PacmanNeuralNetwork startSearch() {
-        PacmanNeuralNetwork bestNN = population[0];
-        int i = 0;
         int notImprovedfor = 0;
+        PacmanNeuralNetwork bestNN = population[0];
         PacmanNeuralNetwork[] initialPop = population;
         //for (int i = 0; i < NUM_GENERATIONS; i++) {
-        while ((bestNN.getFitness(Commons.SEED) + bestNN.getFitness(Commons.SEED + 1)) / 2 < 40000) {
+        int i = 0;
+        while(bestNN.getCachedFitness()  < 100000){
+            notImprovedfor++;
             PacmanNeuralNetwork[] newPopulation = new PacmanNeuralNetwork[NUM_POPULATION];
 
-            if(notImprovedfor > 2500){
+            if(notImprovedfor > 7500){
                 notImprovedfor = 0;
-                newPopulation = initialPop;
+                createPopulation();
+                newPopulation = population;
                 System.out.println("Reseted Population");
             }
             List<PacmanNeuralNetwork> populationList = Arrays.asList(population);
 
-            populationList.sort((nn1, nn2) -> (int) (((nn1.getFitness(Commons.SEED) + nn1.getFitness(Commons.SEED + 1)) / 2) - ((nn2.getFitness(Commons.SEED) + nn2.getFitness(Commons.SEED + 1)) / 2)));
+            populationList.sort((nn1, nn2) -> (int) ((nn2.getCachedFitness() - nn1.getCachedFitness())));
             populationList.toArray(population);
 
-            PacmanNeuralNetwork bestInPopulation = population[NUM_POPULATION - 1];
+            PacmanNeuralNetwork bestInPopulation = population[0];
 
-            if(i % 50 == 0)
-                System.out.println("Generation Number: " + i);
-
-            if ((bestInPopulation.getFitness(Commons.SEED) + bestInPopulation.getFitness(Commons.SEED + 1)) / 2 > (bestNN.getFitness(Commons.SEED) + bestNN.getFitness(Commons.SEED + 1)) / 2) {
-                bestNN = bestInPopulation;
-                System.out.println("Generation Number: " + i);
-                System.out.println("Best neural network updated! Fitness: " + (bestNN.getFitness(Commons.SEED) + bestNN.getFitness(Commons.SEED + 1)) / 2);
+            if(i % 50 == 0){
+                System.out.println("Geracao = " + i);
             }
 
+
+            if (bestInPopulation.getCachedFitness() > bestNN.getCachedFitness()) {
+                System.out.println("Generation Number: " + i);
+                notImprovedfor = 0;
+                bestNN = bestInPopulation;
+                System.out.println("Best neural network updated! Fitness: " + bestNN.getCachedFitness());
+            }
             for(int t = 0; t < TOP_KEEPERS; t++){
                 newPopulation[t] = population[t];
             }
@@ -74,31 +78,30 @@ public class PacmanGeneticAlgorithm {
                     newPopulation[z] = mutation(newPopulation[z]);
                 }
             }
-            notImprovedfor++;
-            i++;
             population = newPopulation;
+            i++;
         }
-        System.out.println((bestNN.getFitness(Commons.SEED) + bestNN.getFitness(Commons.SEED + 1)) / 2);
+        System.out.println(bestNN.getFitness());
+        System.out.println(bestNN.getCachedFitness());
         return bestNN;
     }
-
 
     private PacmanNeuralNetwork selectParent() {
         double totalFitness = 0.0;
         for (PacmanNeuralNetwork nn : population) {
-            totalFitness += (nn.getFitness(Commons.SEED)+ nn.getFitness(Commons.SEED + 1)) / 2;
+            totalFitness += nn.getCachedFitness();
         }
 
         double targetSelection = Math.random() * totalFitness;
         double accumulatedFitness = 0.0;
 
         for (PacmanNeuralNetwork nn : population) {
-            accumulatedFitness += (nn.getFitness(Commons.SEED) + nn.getFitness(Commons.SEED + 1) / 2);
+            accumulatedFitness += nn.getCachedFitness();
             if (accumulatedFitness >= targetSelection) {
                 return nn;
             }
         }
-        return population[population.length - 1];
+        return population[0];
     }
 
     private PacmanNeuralNetwork crossOver(PacmanNeuralNetwork a, PacmanNeuralNetwork b) {
@@ -134,35 +137,37 @@ public class PacmanGeneticAlgorithm {
         for (int i = 0; i < nn.getInputLayerDim(); i++) {
             for (int j = 0; j < nn.getHiddenLayerDim(); j++) {
                 if (Math.random() < CHANGE_RATE) {
-                    double value = Math.random();
-                    nn.getHiddenWeights()[i][j]=value;
+                    double value = (Math.random() * 2 - 1);
+                    nn.getHiddenWeights()[i][j] += value; // ANTES ERA APENAS DEFINIDO ENTRE 0 - 1
                 }
             }
         }
 
         for (int i = 0; i < nn.getHiddenLayerDim(); i++) {
             if (Math.random() < CHANGE_RATE) {
-                double value = Math.random();
-                nn.getHiddenBias()[i] = value * Commons.BIAS_FACTOR_BREAKOUT;
+                double value = (Math.random() * 2 - 1);
+                nn.getHiddenBias()[i] += value; // ANTES ERA DEFINIDO ENTRE (0 - 1) * BIAS_FACTOR
             }
         }
 
         for (int i = 0; i < nn.getHiddenLayerDim(); i++) {
             for (int j = 0; j < nn.getOutputLayerDim(); j++) {
                 if (Math.random() < CHANGE_RATE) {
-                    double value = Math.random();
-                    nn.getOutputWeights()[i][j]=value;
+                    double value = (Math.random() * 2 - 1);
+                    nn.getOutputWeights()[i][j] += value; // ANTES ERA APENAS DEFINIDO ENTRE 0 - 1
                 }
             }
         }
 
         for (int i = 0; i < nn.getOutputLayerDim(); i++) {
             if (Math.random() < CHANGE_RATE) {
-                double value = Math.random();
-                nn.getOutputBias()[i] = value * Commons.BIAS_FACTOR_BREAKOUT;
+                double value = (Math.random() * 2 - 1);
+                nn.getOutputBias()[i] += value; // ANTES ERA DEFINIDO ENTRE (0 - 1) * BIAS_FACTOR
             }
         }
         return nn;
     }
+
+
 
 }

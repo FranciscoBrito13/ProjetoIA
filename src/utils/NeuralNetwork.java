@@ -16,6 +16,8 @@ abstract public class NeuralNetwork implements GameController {
     private double[] hiddenBias;
     private double[] outputBias;
 
+    protected Double cachedFitness = null;
+
     public double sigmoid(double x) {
         return 1.0 / (1.0 + Math.exp(-x));
     } // Sigmoid activation function
@@ -23,7 +25,7 @@ abstract public class NeuralNetwork implements GameController {
         return Math.max(0,x);
     } // relu activation function
 
-    public NeuralNetwork(int inputLayerDim, int outputLayerDim, int hiddenLayerDim){
+    protected NeuralNetwork(int inputLayerDim, int outputLayerDim, int hiddenLayerDim){
         this.inputLayerDim = inputLayerDim;
         this.outputLayerDim = outputLayerDim;
         this.hiddenLayerDim = hiddenLayerDim;
@@ -31,7 +33,7 @@ abstract public class NeuralNetwork implements GameController {
 
     }
 
-    public NeuralNetwork(int inputLayerDim, int outputLayerDim, int hiddenLayerDim, double[] values){
+    protected NeuralNetwork(int inputLayerDim, int outputLayerDim, int hiddenLayerDim, double[] values){
         this.inputLayerDim = inputLayerDim;
         this.outputLayerDim = outputLayerDim;
         this.hiddenLayerDim = hiddenLayerDim;
@@ -39,10 +41,6 @@ abstract public class NeuralNetwork implements GameController {
     }
 
     private void initializeRandomParameters() {
-        //Deals with the input weights
-        //W11 W21 W31   Wij, i = input neuron, j = hidden neuron
-        //W12 W22 W32
-        //W13 W23 W33
         hiddenWeights = new double[inputLayerDim][hiddenLayerDim];
         for(int i = 0; i < inputLayerDim; i++){
             for(int j = 0; j < hiddenLayerDim; j++){
@@ -106,15 +104,29 @@ abstract public class NeuralNetwork implements GameController {
         }
     }
 
-    abstract public double hiddenLayerActivationFunc(double x);
-    abstract public double ouputLayerActivationFunc(double x);
+    abstract protected double hiddenLayerActivationFunc(double x);
+    abstract protected double ouputLayerActivationFunc(double x);
 
-    abstract public double[] normalizeInput(int[] inputValues);
+    private double[] normalizeInput(int[] inputValues) {
+        double[] normalizedInput = new double[inputValues.length];
+        double mean = calculateMean(inputValues);
 
-    public double[] feedForward(int[] inputValues){
-        if(inputValues.length != Commons.BREAKOUT_STATE_SIZE)
-            throw new IllegalArgumentException("Wrong amount of input values");
+        for (int i = 0; i < inputValues.length; i++) {
+            normalizedInput[i] = inputValues[i] - mean;
+        }
 
+        return normalizedInput;
+    }
+
+    private double calculateMean(int[] inputValues) {
+        double sum = 0.0;
+        for (int value : inputValues) {
+            sum += value;
+        }
+        return sum / inputValues.length;
+    }
+
+    protected double[] feedForward(int[] inputValues){
         // Normalize input data
         double[] normalizedInput = normalizeInput(inputValues);
 
@@ -143,6 +155,15 @@ abstract public class NeuralNetwork implements GameController {
 
     @Override
     abstract public int nextMove(int[] currentState);
+
+    abstract  protected void precomputeFitness();
+    @Override
+    public double getCachedFitness() {
+        if (this.cachedFitness == null) {
+            precomputeFitness();
+        }
+        return this.cachedFitness;
+    }
 
     @Override
     public String toString() {

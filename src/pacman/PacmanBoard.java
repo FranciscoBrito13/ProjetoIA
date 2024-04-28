@@ -557,7 +557,7 @@ public class PacmanBoard extends JPanel implements ActionListener {
 
 		score = 0;
 
-		pacsLeft = 1;
+		pacsLeft = 2;
 		score = 0;
 		initLevel();
 		N_GHOSTS = 6;
