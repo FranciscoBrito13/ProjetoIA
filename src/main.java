@@ -19,18 +19,17 @@ import java.util.ArrayList;
 public class main {
     public static void main(String[] args){
         //Find best nn
-        BreakoutGeneticAlgorithm ga = new BreakoutGeneticAlgorithm();
-        BreakoutNeuralNetwork nn = ga.startSearch();
+//        BreakoutGeneticAlgorithm ga = new BreakoutGeneticAlgorithm();
+//        BreakoutNeuralNetwork nn = ga.startSearch();
+//
+//        double[] values = nn.getNeuralNetwork();
+//
+//        BreakoutNeuralNetwork nn2  = new BreakoutNeuralNetwork(values, true);
+//        Breakout b = new Breakout(nn2, Commons.SEED);
 
-        double[] values = nn.getNeuralNetwork();
-
-        BreakoutNeuralNetwork nn2  = new BreakoutNeuralNetwork(values, true);
+        BreakoutNeuralNetwork nn2 = new BreakoutNeuralNetwork(readValuesFromFile("BreakoutGoodValues.txt",2), true);
+        System.out.println(nn2.toString());
         Breakout b = new Breakout(nn2, Commons.SEED);
-
-        //BreakoutNeuralNetwork nn2 = new BreakoutNeuralNetwork(readValuesFromFile("BreakoutGoodValues.txt",0));
-        //System.out.println(nn2.toString());
-        //Breakout b = new Breakout(nn2, Commons.SEED);
-        //System.out.println((Math.random() * 2) - 1);
 
 
 //        PacmanGeneticAlgorithm g = new PacmanGeneticAlgorithm();

@@ -1,5 +1,6 @@
 package utils;
 
+import java.util.Arrays;
 import java.util.function.Function;
  public abstract class NeuralNetwork implements GameController {
     //Defines the dimensions of the input, hidden, and output layers
@@ -16,8 +17,12 @@ import java.util.function.Function;
     private double[] outputBias;
 
     protected Double cachedFitness = null;
+    private double[] inputValues;
+    private double[] hiddenValues;
+    private double[] outputValues;
 
-    public double sigmoid(double x) {
+
+     public double sigmoid(double x) {
         return 1.0 / (1.0 + Math.exp(-x));
     } // Sigmoid activation function
     public double relu(double x) {
@@ -41,16 +46,20 @@ import java.util.function.Function;
 
     private void initializeRandomParameters() {
         hiddenWeights = new double[inputLayerDim][hiddenLayerDim];
+        inputValues = new double[inputLayerDim];
         for(int i = 0; i < inputLayerDim; i++){
             for(int j = 0; j < hiddenLayerDim; j++){
                 hiddenWeights[i][j] = Math.random();
             }
+            inputValues[i] = hiddenWeights[i][0];
         }
 
         //Deal with the hidden Bias
         hiddenBias = new double[hiddenLayerDim];
+        hiddenValues = new double[hiddenLayerDim];
         for(int i = 0; i < hiddenLayerDim; i++){
             hiddenBias[i] = (Math.random() * 2) - 1;
+            hiddenValues[i] = hiddenBias[i];
         }
         //Deals with the hidden weights
         outputWeights = new double[hiddenLayerDim][outputLayerDim];
@@ -61,8 +70,10 @@ import java.util.function.Function;
         }
         //Deal with the output Bias
         outputBias = new double[outputLayerDim];
+        outputValues = new double[outputLayerDim];
         for(int i = 0; i < outputLayerDim; i++){
             outputBias[i] = (Math.random() * 2) - 1;
+            outputValues[i] = outputBias[i];
         }
 
     }
@@ -74,6 +85,7 @@ import java.util.function.Function;
         }
 
         hiddenWeights = new double[inputLayerDim][hiddenLayerDim];
+        inputValues = new double[inputLayerDim];
         int index = 0;
 
         for (int i = 0; i < inputLayerDim; i++) {
@@ -81,11 +93,14 @@ import java.util.function.Function;
                 hiddenWeights[i][j] = values[index];
                 index++;
             }
+            inputValues[i] = hiddenWeights[i][0];
         }
 
         hiddenBias = new double[hiddenLayerDim];
+        hiddenValues = new double[hiddenLayerDim];
         for (int i = 0; i < hiddenLayerDim; i++) {
             hiddenBias[i] = values[index];
+            hiddenValues[i] = hiddenBias[i];
             index++;
         }
 
@@ -97,8 +112,10 @@ import java.util.function.Function;
             }
         }
         outputBias = new double[outputLayerDim];
+        outputValues = new double[outputLayerDim];
         for (int i = 0; i < outputLayerDim; i++) {
             outputBias[i] = values[index];
+            outputValues[i] = outputBias[i];
             index++;
         }
     }
@@ -126,6 +143,9 @@ import java.util.function.Function;
     }
 
     protected double[] feedForward(int[] inputValues){
+        for(int i = 0; i < inputValues.length; i++){
+            this.inputValues[i] = (double) inputValues[i];
+        }
         // Normalize input data
         double[] normalizedInput = normalizeInput(inputValues);
 
@@ -139,6 +159,7 @@ import java.util.function.Function;
             neuronSum += hiddenBias[i];
             hiddenLayerOutput[i] = hiddenLayerActivationFunc(neuronSum);
         }
+        this.hiddenValues = hiddenLayerOutput;
         double[] outputLayerOutput = new double[outputLayerDim];
         for (int i = 0; i < outputLayerDim; i++) {
             double neuronSum = 0.0;
@@ -148,6 +169,7 @@ import java.util.function.Function;
             neuronSum += outputBias[i];
             outputLayerOutput[i] = ouputLayerActivationFunc(neuronSum);
         }
+        this.outputValues = outputLayerOutput;
         //System.out.println(outputLayerOutput[0] + " " + outputLayerOutput[1]);
         return outputLayerOutput;
     }
@@ -251,4 +273,16 @@ import java.util.function.Function;
     public double[] getOutputBias() {
         return outputBias;
     }
-}
+
+     public double[] getInputValues() {
+         return inputValues;
+     }
+
+     public double[] getHiddenValues() {
+         return hiddenValues;
+     }
+
+     public double[] getOutputValues() {
+         return outputValues;
+     }
+ }

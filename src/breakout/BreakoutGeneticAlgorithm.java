@@ -31,11 +31,11 @@ public class BreakoutGeneticAlgorithm {
         BreakoutNeuralNetwork[] initialPop = population;
         //for (int i = 0; i < NUM_GENERATIONS; i++) {
         int i = 0;
-        while(bestNN.getCachedFitness()  < 200000){
+        while(bestNN.getCachedFitness()  < 500000){
             notImprovedfor++;
             BreakoutNeuralNetwork[] newPopulation = new BreakoutNeuralNetwork[NUM_POPULATION];
 
-            if(notImprovedfor > 500){
+            if(notImprovedfor > 7500){
                 notImprovedfor = 0;
                 createPopulation();
                 newPopulation = population;

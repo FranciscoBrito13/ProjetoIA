@@ -1,5 +1,6 @@
 package breakout;
 
+import utils.Commons;
 import utils.NeuralNetwork;
 
 import javax.swing.*;
@@ -14,18 +15,35 @@ public class NeuralNetworkPanel extends JPanel {
     private static final int NEURON_SIZE = 20; // Diameter of each neuron
     private static final int SPACE_BETWEEN_NEURONS = 40; // Space between neurons
     private static final int LAYER_GAP = 100; // Space between layers
-    private static final Color NEURON_COLOR = Color.BLACK;
 
     private int inputLayerSize;
     private int hiddenLayerSize;
     private int outputLayerSize;
 
-    public NeuralNetworkPanel(int inputLayerSize, int hiddenLayerSize, int outputLayerSize) {
-        this.inputLayerSize = inputLayerSize;
-        this.hiddenLayerSize = hiddenLayerSize;
-        this.outputLayerSize = outputLayerSize;
-        setPreferredSize(new Dimension(800, 600));
+    private NeuralNetwork nn;
+    private Timer timer;
+
+    public NeuralNetworkPanel(NeuralNetwork nn) {
+        this.inputLayerSize = nn.getInputLayerDim();
+        this.hiddenLayerSize = nn.getHiddenLayerDim();
+        this.outputLayerSize = nn.getOutputLayerDim();
+        this.nn = nn;
+
+        initView();
+
     }
+
+    private void initView() {
+        setFocusable(true);
+        setPreferredSize(new Dimension(800, 600));
+        networkInit();
+    }
+
+    private void networkInit() {
+        timer = new Timer(Commons.PERIOD, new NeuralNetworkPanel.GameCycle());
+        timer.start();
+    }
+
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -36,25 +54,47 @@ public class NeuralNetworkPanel extends JPanel {
         int hiddenLayerX = inputLayerX + 200;
         int outputLayerX = hiddenLayerX + 200;
 
-        drawNeurons(g2d, inputLayerSize, inputLayerX, LAYER_GAP);
+        drawNeurons(g2d, inputLayerSize, inputLayerX, LAYER_GAP, nn.getInputValues());
 
-        drawNeurons(g2d, hiddenLayerSize, hiddenLayerX, LAYER_GAP);
+        drawNeurons(g2d, hiddenLayerSize, hiddenLayerX, LAYER_GAP, nn.getHiddenValues());
 
-        drawNeurons(g2d, outputLayerSize, outputLayerX, LAYER_GAP);
+        drawNeurons(g2d, outputLayerSize, outputLayerX, LAYER_GAP, nn.getOutputValues());
+
         drawConnections(g2d, inputLayerSize, 100, hiddenLayerSize, 300);
 
         drawConnections(g2d, hiddenLayerSize, 300, outputLayerSize, 500);
+
     }
 
-     private void drawNeurons(Graphics2D g2d, int layerSize, int x, int layerGap) {
+     private void drawNeurons(Graphics2D g2d, int layerSize, int x, int layerGap, double[] values) {
         int startY = (getHeight() - layerSize * SPACE_BETWEEN_NEURONS) / 2;
         int startX = x;
 
+        double minActivation = Double.MAX_VALUE;
+        double maxActivation = Double.MIN_VALUE;
+        for (double value : values) {
+            minActivation = Math.min(minActivation, value);
+            maxActivation = Math.max(maxActivation, value);
+        }
+
+        Color minColor = Color.BLUE; // Cor para os valores mínimos
+        Color maxColor = Color.RED; // Cor para os valores máximos
+
+
         for (int i = 0; i < layerSize; i++) {
             int centerY = startY + i * SPACE_BETWEEN_NEURONS + NEURON_SIZE / 2;
-            g2d.setColor(NEURON_COLOR);
+            double normalizedValue = (values[i] - minActivation) / (maxActivation - minActivation);
+            Color color = interpolateColor(minColor, maxColor, normalizedValue);
+            g2d.setColor(color);
             g2d.drawOval(startX, centerY - NEURON_SIZE / 2, NEURON_SIZE, NEURON_SIZE);
         }
+    }
+
+    private Color interpolateColor(Color c1, Color c2, double fraction) {
+        double r = c1.getRed() + fraction * (c2.getRed() - c1.getRed());
+        double g = c1.getGreen() + fraction * (c2.getGreen() - c1.getGreen());
+        double b = c1.getBlue() + fraction * (c2.getBlue() - c1.getBlue());
+        return new Color((int) r, (int) g, (int) b);
     }
     private void drawConnections(Graphics2D g2d, int fromLayerSize, int fromX, int toLayerSize, int toX) {
         int fromStartY = (getHeight() - fromLayerSize * SPACE_BETWEEN_NEURONS) / 2;
@@ -70,5 +110,18 @@ public class NeuralNetworkPanel extends JPanel {
                 g2d.drawLine(fromX + NEURON_SIZE, fromY, toX, toY);
             }
         }
+    }
+
+    private class GameCycle implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            doGameCycle();
+        }
+
+
+    }
+
+    private void doGameCycle() {
+        repaint();
     }
 }

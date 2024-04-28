@@ -16,7 +16,7 @@ public class NeuralNetworkGUI {
         frame.setSize(600, 600);
         frame.setLocationRelativeTo(null);
 
-        neuralNetworkPanel = new NeuralNetworkPanel(7,6,2);
+        neuralNetworkPanel = new NeuralNetworkPanel(neuralNetwork);
         frame.add(neuralNetworkPanel, BorderLayout.CENTER);
         frame.setVisible(true);
     }
