@@ -14,12 +14,10 @@ public interface Commons {
 	public static final int INIT_BALL_X = 230;
 	public static final int INIT_BALL_Y = 355;    
 	public static final int PERIOD = 5;
-
-	public static final int BIAS_FACTOR_BREAKOUT = 3;
-
-	public static final int BIAS_FACTOR_PACMAN = 5;
 	public static final int BREAKOUT_STATE_SIZE = 7;
 	public static final int BREAKOUT_NUM_ACTIONS = 2;
+	public static final int HIDDEN_NEURONS_PACMAN = 50;
+	public static final int HIDDEN_NEURONS_BREAKOUT = 50;
 	
 	public static final int PACMAN_NUM_ACTIONS = 5;
 	public static final int PACMAN_STATE_SIZE = PacmanBoard.N_BLOCKS * PacmanBoard.N_BLOCKS * 2 + 2 + PacmanBoard.MAX_GHOSTS * 2;

@@ -35,7 +35,7 @@ public class NeuralNetworkPanel extends JPanel {
 
     private void initView() {
         setFocusable(true);
-        setPreferredSize(new Dimension(800, 600));
+        setPreferredSize(new Dimension(600, 600));
         networkInit();
     }
 
@@ -77,8 +77,8 @@ public class NeuralNetworkPanel extends JPanel {
             maxActivation = Math.max(maxActivation, value);
         }
 
-        Color minColor = Color.BLUE; // Cor para os valores mínimos
-        Color maxColor = Color.RED; // Cor para os valores máximos
+        Color minColor = Color.CYAN; // Cor para os valores mínimos
+        Color maxColor = Color.BLUE; // Cor para os valores máximos
 
 
         for (int i = 0; i < layerSize; i++) {
@@ -86,7 +86,7 @@ public class NeuralNetworkPanel extends JPanel {
             double normalizedValue = (values[i] - minActivation) / (maxActivation - minActivation);
             Color color = interpolateColor(minColor, maxColor, normalizedValue);
             g2d.setColor(color);
-            g2d.drawOval(startX, centerY - NEURON_SIZE / 2, NEURON_SIZE, NEURON_SIZE);
+            g2d.fillOval(startX, centerY - NEURON_SIZE / 2, NEURON_SIZE, NEURON_SIZE);
         }
     }
 
@@ -108,8 +108,12 @@ public class NeuralNetworkPanel extends JPanel {
 
                 g2d.setColor(Color.BLACK);
                 g2d.drawLine(fromX + NEURON_SIZE, fromY, toX, toY);
+
+                g2d.drawString("Azul escuro representa um neurónio com maior ativação", 10 ,10);
+                g2d.drawString("Azul claro representa um neurónio com menor ativação", 10 ,30);
             }
         }
+
     }
 
     private class GameCycle implements ActionListener {

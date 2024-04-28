@@ -20,7 +20,7 @@ public class PacmanGeneticAlgorithm {
     }
     private void createPopulation() {
         for(int i = 0; i < NUM_POPULATION; i++){
-            PacmanNeuralNetwork nn = new PacmanNeuralNetwork();
+            PacmanNeuralNetwork nn = new PacmanNeuralNetwork(false);
             population[i] = nn;
         }
     }
@@ -31,7 +31,7 @@ public class PacmanGeneticAlgorithm {
         PacmanNeuralNetwork[] initialPop = population;
         //for (int i = 0; i < NUM_GENERATIONS; i++) {
         int i = 0;
-        while(bestNN.getCachedFitness()  < 100000){
+        while(bestNN.getCachedFitness()  < 30000){
             notImprovedfor++;
             PacmanNeuralNetwork[] newPopulation = new PacmanNeuralNetwork[NUM_POPULATION];
 
@@ -105,7 +105,7 @@ public class PacmanGeneticAlgorithm {
     }
 
     private PacmanNeuralNetwork crossOver(PacmanNeuralNetwork a, PacmanNeuralNetwork b) {
-        PacmanNeuralNetwork childNetwork = new PacmanNeuralNetwork();
+        PacmanNeuralNetwork childNetwork = new PacmanNeuralNetwork(false);
 
         // Crossover for hidden weights
         for (int i = 0; i < a.getInputLayerDim(); i++) {

@@ -79,8 +79,10 @@ import java.util.function.Function;
     }
 
     private void initializeParameters(double[] values) {
-        int expectedLength = inputLayerDim * hiddenLayerDim + hiddenLayerDim + hiddenLayerDim * outputLayerDim + outputLayerDim;
+        int expectedLength = (inputLayerDim * hiddenLayerDim) + hiddenLayerDim + (hiddenLayerDim * outputLayerDim) + outputLayerDim;
         if (values.length != expectedLength) {
+            System.out.println("Expected length = " + expectedLength);
+            System.out.println("Actual length = " + values.length);
             throw new IllegalArgumentException("Wrong amount of arguments");
         }
 

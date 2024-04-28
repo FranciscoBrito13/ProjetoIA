@@ -5,8 +5,6 @@ import utils.NeuralNetwork;
 
 public class BreakoutNeuralNetwork extends NeuralNetwork {
     private NeuralNetworkGUI neuralNetworkGUI;
-    private double[] hiddenLayerActivations;
-    private double[] outputLayerActivations;
 
     public BreakoutNeuralNetwork(boolean activateGUI){
         super(Commons.BREAKOUT_STATE_SIZE,Commons.BREAKOUT_NUM_ACTIONS,6);

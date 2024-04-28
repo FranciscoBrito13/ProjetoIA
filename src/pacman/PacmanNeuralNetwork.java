@@ -1,17 +1,29 @@
 package pacman;
 
-import breakout.BreakoutBoard;
+import breakout.NeuralNetworkGUI;
 import utils.Commons;
 import utils.NeuralNetwork;
 
 public class PacmanNeuralNetwork extends NeuralNetwork {
+    private NeuralNetworkGUI neuralNetworkGUI;
 
-    public PacmanNeuralNetwork() {
-        super(Commons.PACMAN_STATE_SIZE,Commons.PACMAN_NUM_ACTIONS,10);
+
+    public PacmanNeuralNetwork(boolean activateGUI) {
+        super(Commons.PACMAN_STATE_SIZE,Commons.PACMAN_NUM_ACTIONS,Commons.HIDDEN_NEURONS_PACMAN);
+        if(activateGUI) {
+            activateGUI();
+        }
     }
 
-    public PacmanNeuralNetwork(double[] values) {
-        super(Commons.PACMAN_STATE_SIZE,Commons.PACMAN_NUM_ACTIONS,200, values);
+    public PacmanNeuralNetwork(double[] values, boolean activateGUI) {
+        super(Commons.PACMAN_STATE_SIZE,Commons.PACMAN_NUM_ACTIONS,Commons.HIDDEN_NEURONS_PACMAN, values);
+        if(activateGUI) {
+            activateGUI();
+        }
+    }
+
+    private void activateGUI() {
+        neuralNetworkGUI = new NeuralNetworkGUI(this);
     }
 
     protected double hiddenLayerActivationFunc(double x){

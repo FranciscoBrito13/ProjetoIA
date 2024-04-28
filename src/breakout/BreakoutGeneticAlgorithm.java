@@ -10,7 +10,7 @@ public class BreakoutGeneticAlgorithm {
     private static final double MUTATION_RATE = 0.25;
 
     private static final double CHANGE_RATE = 0.70;
-    private static final double NUM_GENERATIONS = 50000;
+    private static final double NUM_GENERATIONS = 1000;
     private static final int TOP_KEEPERS = 4;
     private BreakoutNeuralNetwork[] population;
 
@@ -29,13 +29,15 @@ public class BreakoutGeneticAlgorithm {
         int notImprovedfor = 0;
         BreakoutNeuralNetwork bestNN = population[0];
         BreakoutNeuralNetwork[] initialPop = population;
-        //for (int i = 0; i < NUM_GENERATIONS; i++) {
-        int i = 0;
-        while(bestNN.getCachedFitness()  < 500000){
+
+        //int i = 0;
+        //while(bestNN.getCachedFitness()  < 500000){ { //IT CAN ALSO STOP WHEN IT REACHES A CERTAIN FITNESS
+
+        for (int i = 0; i < NUM_GENERATIONS; i++){
             notImprovedfor++;
             BreakoutNeuralNetwork[] newPopulation = new BreakoutNeuralNetwork[NUM_POPULATION];
 
-            if(notImprovedfor > 7500){
+            if(notImprovedfor > 4000){
                 notImprovedfor = 0;
                 createPopulation();
                 newPopulation = population;
@@ -79,7 +81,7 @@ public class BreakoutGeneticAlgorithm {
                 }
             }
             population = newPopulation;
-            i++;
+            //i++;
         }
         System.out.println(bestNN.getCachedFitness());
         return bestNN;
