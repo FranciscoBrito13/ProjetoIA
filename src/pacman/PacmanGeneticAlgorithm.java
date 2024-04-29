@@ -27,62 +27,64 @@ public class PacmanGeneticAlgorithm {
 
     public PacmanNeuralNetwork startSearch() {
         int notImprovedfor = 0;
-        PacmanNeuralNetwork bestNN = population[0];
-        PacmanNeuralNetwork[] initialPop = population;
+        PacmanNeuralNetwork bestNN = new PacmanNeuralNetwork(false);
         //for (int i = 0; i < NUM_GENERATIONS; i++) {
         int i = 0;
-        while(bestNN.getCachedFitness()  < 30000){
+        while (bestNN.getCachedFitness() < 120000) {
             notImprovedfor++;
             PacmanNeuralNetwork[] newPopulation = new PacmanNeuralNetwork[NUM_POPULATION];
-
-            if(notImprovedfor > 7500){
+            if (notImprovedfor > 3000) {
                 notImprovedfor = 0;
                 createPopulation();
                 newPopulation = population;
                 System.out.println("Reseted Population");
             }
-            List<PacmanNeuralNetwork> populationList = Arrays.asList(population);
 
+
+            List<PacmanNeuralNetwork> populationList = Arrays.asList(population);
             populationList.sort((nn1, nn2) -> (int) ((nn2.getCachedFitness() - nn1.getCachedFitness())));
             populationList.toArray(population);
 
             PacmanNeuralNetwork bestInPopulation = population[0];
 
-            if(i % 50 == 0){
+            if (bestInPopulation.getCachedFitness() > bestNN.getCachedFitness()) {
+                notImprovedfor = 0;
+                bestNN = new PacmanNeuralNetwork(bestInPopulation);
+                System.out.println("Generation Number: " + i);
+                System.out.println("Best neural network updated! Fitness: " + bestNN.getCachedFitness());
+            }
+
+            if (i % 50 == 0) {
                 System.out.println("Geracao = " + i);
             }
 
-
-            if (bestInPopulation.getCachedFitness() > bestNN.getCachedFitness()) {
-                System.out.println("Generation Number: " + i);
-                notImprovedfor = 0;
-                bestNN = bestInPopulation;
-                System.out.println("Best neural network updated! Fitness: " + bestNN.getCachedFitness());
-            }
-            for(int t = 0; t < TOP_KEEPERS; t++){
+            for (int t = 0; t < TOP_KEEPERS; t++) {
                 newPopulation[t] = population[t];
             }
 
             for (int j = 0; j < (NUM_POPULATION - TOP_KEEPERS) / 2; j++) {
-                PacmanNeuralNetwork parentOne = selectParent();
-                PacmanNeuralNetwork parentTwo = selectParent();
-                PacmanNeuralNetwork childrenOne = crossOver(parentOne, parentTwo);
-                PacmanNeuralNetwork childrenTwo = crossOver(parentOne, parentTwo);
-                newPopulation[j + TOP_KEEPERS] = childrenOne;
-                newPopulation[(j + TOP_KEEPERS) + ((NUM_POPULATION- TOP_KEEPERS)/ 2)] = childrenTwo;
-            }
+                    PacmanNeuralNetwork parentOne = selectParent();
+                    PacmanNeuralNetwork parentTwo = selectParent();
+                    PacmanNeuralNetwork childrenOne = crossOver(parentOne, parentTwo);
+                    PacmanNeuralNetwork childrenTwo = crossOver(parentOne, parentTwo);
+                    newPopulation[j + TOP_KEEPERS] = childrenOne;
+                    newPopulation[(j + TOP_KEEPERS) + ((NUM_POPULATION - TOP_KEEPERS) / 2)] = childrenTwo;
+                }
 
             for (int z = 0; z < NUM_POPULATION; z++) {
-                double rand = Math.random();
-                if (rand < MUTATION_RATE) {
-                    newPopulation[z] = mutation(newPopulation[z]);
+                    double rand = Math.random();
+                    if (rand < MUTATION_RATE) {
+                        newPopulation[z] = mutation(newPopulation[z]);
+                    }
                 }
-            }
-            population = newPopulation;
+
+
+            population = newPopulation; //THE BEST IN POPULATION MIGHT NOT BE IN POPULATION[0]
+
             i++;
         }
-        System.out.println(bestNN.getFitness());
         System.out.println(bestNN.getCachedFitness());
+        System.out.println(bestNN.getFitness());
         return bestNN;
     }
 
@@ -165,6 +167,7 @@ public class PacmanGeneticAlgorithm {
                 nn.getOutputBias()[i] += value; // ANTES ERA DEFINIDO ENTRE (0 - 1) * BIAS_FACTOR
             }
         }
+        nn.precomputeFitness();
         return nn;
     }
 

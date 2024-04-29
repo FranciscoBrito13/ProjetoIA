@@ -70,7 +70,7 @@ public class PacmanBoard extends JPanel implements ActionListener {
 	private int pacman_x, pacman_y, pacmand_x, pacmand_y;
 	private int req_dx, req_dy, view_dx, view_dy;
 
-	private int[] state = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	private final int[] state = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 			1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 			1, 1, 1, -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, 1,
 			1, 1, 1, 1, -1, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, -1, -1, 1, 1, -1, 1, 1, 1, 1, 1, 1, 1, 1, -1, 1, 1, 1, 1,
@@ -143,6 +143,7 @@ public class PacmanBoard extends JPanel implements ActionListener {
 	}
 
 	public void runSimulation() {
+		//System.out.println("Corri Sim");
 		initGame();
 		inGame = true;
 		while (inGame) {
@@ -157,8 +158,8 @@ public class PacmanBoard extends JPanel implements ActionListener {
 	@Override
 	public void addNotify() {
 		super.addNotify();
-
-		initGame();
+		System.out.println("AddNotify");
+		//initGame(); //ISTO CAUSA UM BUG NO JOGO!!! CORRE ANTES DE INICIAR A GUI!
 	}
 
 	public void makeMove(int move) {
@@ -579,7 +580,7 @@ public class PacmanBoard extends JPanel implements ActionListener {
 		short i;
 		int dx = 1;
 		int random;
-
+		//System.out.println("Continue Level " + pacsLeft);
 		for (i = 0; i < N_GHOSTS; i++) {
 
 			ghost_y[i] = 4 * BLOCK_SIZE;

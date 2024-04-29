@@ -33,14 +33,14 @@ public class main {
         //BreakoutNeuralNetwork nn2 = new BreakoutNeuralNetwork(values, true);
 
         //OR GET THE NN FROM A TXT FILE, FIRST BLOCK IS 0
-        BreakoutNeuralNetwork nn2 = new BreakoutNeuralNetwork(readValuesFromFile("BreakoutGoodValues.txt",2), true);
+        //BreakoutNeuralNetwork nn2 = new BreakoutNeuralNetwork(readValuesFromFile("BreakoutGoodValues.txt",2), true);
 
         //RUN THE GAME CONTROLLED BY THE NN WITH THE GUI ON
-        Breakout b = new Breakout(nn2, Commons.SEED);
+        //Breakout b = new Breakout(nn2, Commons.SEED);
 
         ///*/
 
-        /*
+        ///*
         //FIND BEST NN
         PacmanGeneticAlgorithm g = new PacmanGeneticAlgorithm();
         PacmanNeuralNetwork nn = g.startSearch();
@@ -49,17 +49,17 @@ public class main {
         double[] values = nn.getNeuralNetwork();
 
         //ALLOWS TO SAVE THE NN VALUES ON A TXT FILE
-        writeValuesToFile(nn.getNeuralNetwork(), "PacmanGoodValues.txt", nn)
+        writeValuesToFile(nn.getNeuralNetwork(), "PacmanGoodValues.txt", nn);
 
         // CREATE ANOTHER NN WITH THOSE SAME VALUES
-        PacmanNeuralNetwork nn2 = new PacmanNeuralNetwork(values, true);
+        //PacmanNeuralNetwork nn2 = new PacmanNeuralNetwork(values, false);
 
         //OR GET THE NN FROM A TXT FILE, FIRST BLOCK IS 0
-        BreakoutNeuralNetwork nn2 = new BreakoutNeuralNetwork(readValuesFromFile("PacmanGoodValues.txt",2), true);
+        PacmanNeuralNetwork nn2 = new PacmanNeuralNetwork(readValuesFromFile("PacmanGoodValues.txt",0), true);
 
         //RUN THE GAME CONTROLLED BY THE NN WITH THE GUI ON
-        Pacman p = new Pacman(nn2, Commons.SEED);
-        */
+        Pacman p = new Pacman(nn2, true,  Commons.SEED);
+        //*/
     }
 
 

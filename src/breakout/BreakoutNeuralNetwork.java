@@ -41,12 +41,13 @@ public class BreakoutNeuralNetwork extends NeuralNetwork {
         }
     }
 
-    protected void precomputeFitness() {
+    protected double precomputeFitness() {
         BreakoutBoard bnn = new BreakoutBoard(this, false, Commons.SEED);
         bnn.runSimulation();
         BreakoutBoard bnn2 = new BreakoutBoard(this, false, Commons.SEED + 50);
         bnn2.runSimulation();
         cachedFitness = (bnn.getFitness() + bnn2.getFitness()) / 2;
+        return cachedFitness;
     }
 
 

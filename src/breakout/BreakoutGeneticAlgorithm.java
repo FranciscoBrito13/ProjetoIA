@@ -166,6 +166,7 @@ public class BreakoutGeneticAlgorithm {
                 nn.getOutputBias()[i] += value; // ANTES ERA DEFINIDO ENTRE (0 - 1) * BIAS_FACTOR
             }
         }
+        nn.precomputeFitness();
         return nn;
     }
 

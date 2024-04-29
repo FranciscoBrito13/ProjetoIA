@@ -179,7 +179,7 @@ import java.util.function.Function;
     @Override
     abstract public int nextMove(int[] currentState);
 
-    abstract  protected void precomputeFitness();
+    abstract  protected double precomputeFitness();
     @Override
     public double getCachedFitness() {
         if (this.cachedFitness == null) {

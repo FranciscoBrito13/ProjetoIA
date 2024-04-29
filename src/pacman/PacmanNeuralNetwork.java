@@ -22,6 +22,10 @@ public class PacmanNeuralNetwork extends NeuralNetwork {
         }
     }
 
+    public PacmanNeuralNetwork(PacmanNeuralNetwork nn){
+        super(Commons.PACMAN_STATE_SIZE,Commons.PACMAN_NUM_ACTIONS,Commons.HIDDEN_NEURONS_PACMAN,nn.getNeuralNetwork());
+    }
+
     private void activateGUI() {
         neuralNetworkGUI = new NeuralNetworkGUI(this);
     }
@@ -45,12 +49,13 @@ public class PacmanNeuralNetwork extends NeuralNetwork {
         return max;
     }
 
-    protected void precomputeFitness() {
+    public double precomputeFitness() {
         PacmanBoard pnn = new PacmanBoard(this, false, Commons.SEED);
         pnn.runSimulation();
-        PacmanBoard pnn2 = new PacmanBoard(this, false, Commons.SEED + 50);
-        pnn2.runSimulation();
-        cachedFitness = (pnn.getFitness() + pnn2.getFitness()) / 2;
+        //PacmanBoard pnn2 = new PacmanBoard(this, false, Commons.SEED + 50);
+        //pnn2.runSimulation();
+        cachedFitness = (pnn.getFitness()); //+ pnn2.getFitness()) / 2;
+        return cachedFitness;
     }
 
     public double getFitness(){
