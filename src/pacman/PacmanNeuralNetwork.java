@@ -1,6 +1,6 @@
 package pacman;
 
-import breakout.NeuralNetworkGUI;
+import utils.NeuralNetworkGUI;
 import utils.Commons;
 import utils.NeuralNetwork;
 
@@ -58,6 +58,7 @@ public class PacmanNeuralNetwork extends NeuralNetwork {
         return cachedFitness;
     }
 
+    //THE TRAINING CAN BE DONE USING ONE SEED OR MULTIPLE SEEDS TO AVOID OVERFITTING, ONE SEED SEEMS TO WORK WELL BUT PACMAN HAS A BIGGER COMPLEXITY
     public double getFitness(){
         PacmanBoard pnn = new PacmanBoard(this, false, Commons.SEED);
         pnn.runSimulation();

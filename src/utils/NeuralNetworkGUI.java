@@ -1,7 +1,6 @@
-package breakout;
+package utils;
 
 
-import utils.NeuralNetwork;
 import javax.swing.*;
 import java.awt.*;
 

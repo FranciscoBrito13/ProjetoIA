@@ -30,23 +30,28 @@ public class PacmanGeneticAlgorithm {
         PacmanNeuralNetwork bestNN = new PacmanNeuralNetwork(false);
         //for (int i = 0; i < NUM_GENERATIONS; i++) {
         int i = 0;
-        while (bestNN.getCachedFitness() < 120000) {
+        while (bestNN.getCachedFitness() < 145000) {
             notImprovedfor++;
+
+            //Cria uma nova população
             PacmanNeuralNetwork[] newPopulation = new PacmanNeuralNetwork[NUM_POPULATION];
-            if (notImprovedfor > 3000) {
+
+            if (notImprovedfor > 6000) {
                 notImprovedfor = 0;
                 createPopulation();
                 newPopulation = population;
                 System.out.println("Reseted Population");
             }
 
-
+            //Sort na população pelo fitness
             List<PacmanNeuralNetwork> populationList = Arrays.asList(population);
             populationList.sort((nn1, nn2) -> (int) ((nn2.getCachedFitness() - nn1.getCachedFitness())));
             populationList.toArray(population);
 
+            //Guarda uma referencia para o melhor da população, na posição 0 do array
             PacmanNeuralNetwork bestInPopulation = population[0];
 
+            //Caso o melhor da geração seja melhor que a melhor rede atualmente, atualiza essa rede
             if (bestInPopulation.getCachedFitness() > bestNN.getCachedFitness()) {
                 notImprovedfor = 0;
                 bestNN = new PacmanNeuralNetwork(bestInPopulation);
@@ -58,10 +63,12 @@ public class PacmanGeneticAlgorithm {
                 System.out.println("Geracao = " + i);
             }
 
+            //Solução elitista para guardar sempre algumas das melhores redes
             for (int t = 0; t < TOP_KEEPERS; t++) {
                 newPopulation[t] = population[t];
             }
 
+            //Chama o Selection e o CrossOver para criar a nova população
             for (int j = 0; j < (NUM_POPULATION - TOP_KEEPERS) / 2; j++) {
                     PacmanNeuralNetwork parentOne = selectParent();
                     PacmanNeuralNetwork parentTwo = selectParent();
@@ -71,6 +78,7 @@ public class PacmanGeneticAlgorithm {
                     newPopulation[(j + TOP_KEEPERS) + ((NUM_POPULATION - TOP_KEEPERS) / 2)] = childrenTwo;
                 }
 
+            //Altera alguns dos individuos consoante a chance de mutação
             for (int z = 0; z < NUM_POPULATION; z++) {
                     double rand = Math.random();
                     if (rand < MUTATION_RATE) {
@@ -79,11 +87,10 @@ public class PacmanGeneticAlgorithm {
                 }
 
 
-            population = newPopulation; //THE BEST IN POPULATION MIGHT NOT BE IN POPULATION[0]
-
-            i++;
+            population = newPopulation; //THE BEST IN POPULATION MIGHT NOT BE IN POPULATION[0] BECAUSE OF MUTATION
+            i++; //caso a condição de paragem seja o fitness e nao o nr de gerações
         }
-        System.out.println(bestNN.getCachedFitness());
+
         System.out.println(bestNN.getFitness());
         return bestNN;
     }

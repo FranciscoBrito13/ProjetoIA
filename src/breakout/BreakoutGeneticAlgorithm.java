@@ -1,4 +1,5 @@
 package breakout;
+import pacman.PacmanNeuralNetwork;
 import utils.Commons;
 
 import java.util.Arrays;
@@ -27,13 +28,12 @@ public class BreakoutGeneticAlgorithm {
 
     public BreakoutNeuralNetwork startSearch() {
         int notImprovedfor = 0;
-        BreakoutNeuralNetwork bestNN = population[0];
-        BreakoutNeuralNetwork[] initialPop = population;
+        BreakoutNeuralNetwork bestNN = new BreakoutNeuralNetwork(false);
 
-        //int i = 0;
-        //while(bestNN.getCachedFitness()  < 500000){ { //IT CAN ALSO STOP WHEN IT REACHES A CERTAIN FITNESS
+        int i = 0;
+        while(bestNN.getCachedFitness()  < 2000000){
+        //for (int i = 0; i < NUM_GENERATIONS; i++){
 
-        for (int i = 0; i < NUM_GENERATIONS; i++){
             notImprovedfor++;
             BreakoutNeuralNetwork[] newPopulation = new BreakoutNeuralNetwork[NUM_POPULATION];
 
@@ -43,24 +43,27 @@ public class BreakoutGeneticAlgorithm {
                 newPopulation = population;
                 System.out.println("Reseted Population");
             }
-            List<BreakoutNeuralNetwork> populationList = Arrays.asList(population);
 
+            //Sort na população pelo fitness
+            List<BreakoutNeuralNetwork> populationList = Arrays.asList(population);
             populationList.sort((nn1, nn2) -> (int) ((nn2.getCachedFitness() - nn1.getCachedFitness())));
             populationList.toArray(population);
 
+            //Guarda uma referencia para o melhor da população, na posição 0 do array
             BreakoutNeuralNetwork bestInPopulation = population[0];
+
+            //Caso o melhor da geração seja melhor que a melhor rede atualmente, atualiza essa rede
+            if (bestInPopulation.getCachedFitness() > bestNN.getCachedFitness()) {
+                notImprovedfor = 0;
+                bestNN = new BreakoutNeuralNetwork(bestInPopulation);
+                System.out.println("Generation Number: " + i);
+                System.out.println("Best neural network updated! Fitness: " + bestNN.getCachedFitness());
+            }
 
             if(i % 50 == 0){
                 System.out.println("Geracao = " + i);
             }
 
-
-            if (bestInPopulation.getCachedFitness() > bestNN.getCachedFitness()) {
-                System.out.println("Generation Number: " + i);
-                notImprovedfor = 0;
-                bestNN = bestInPopulation;
-                System.out.println("Best neural network updated! Fitness: " + bestNN.getCachedFitness());
-            }
             for(int t = 0; t < TOP_KEEPERS; t++){
                 newPopulation[t] = population[t];
             }
@@ -81,7 +84,7 @@ public class BreakoutGeneticAlgorithm {
                 }
             }
             population = newPopulation;
-            //i++;
+            i++;
         }
         System.out.println(bestNN.getCachedFitness());
         return bestNN;
@@ -169,7 +172,5 @@ public class BreakoutGeneticAlgorithm {
         nn.precomputeFitness();
         return nn;
     }
-
-
 
 }

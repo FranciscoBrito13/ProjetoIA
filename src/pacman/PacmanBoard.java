@@ -158,7 +158,7 @@ public class PacmanBoard extends JPanel implements ActionListener {
 	@Override
 	public void addNotify() {
 		super.addNotify();
-		System.out.println("AddNotify");
+		//System.out.println("AddNotify");
 		//initGame(); //ISTO CAUSA UM BUG NO JOGO!!! CORRE ANTES DE INICIAR A GUI!
 	}
 
